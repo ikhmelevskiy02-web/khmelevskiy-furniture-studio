@@ -44,13 +44,13 @@ const SERVICES_TICKER = [
 ]
 
 const CLIENTS = [
-  { name: 'Beeline', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'Beeline', font: 'Manrope, sans-serif', weight: 700 },
   { name: 'SOKOLOV', font: 'Georgia, serif', weight: 600 },
-  { name: '585 Золотой', font: 'Inter, sans-serif', weight: 700 },
-  { name: 'Giorgio Armani', font: '"Source Serif 4", serif', weight: 600 },
-  { name: 'RED Valentino', font: '"Source Serif 4", serif', weight: 600 },
+  { name: '585 Золотой', font: 'Manrope, sans-serif', weight: 700 },
+  { name: 'Giorgio Armani', font: '"Cormorant Garamond", serif', weight: 600 },
+  { name: 'RED Valentino', font: '"Cormorant Garamond", serif', weight: 600 },
   { name: 'Picart', font: 'Georgia, serif', weight: 500 },
-  { name: 'SOHO Restaurant', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'SOHO Restaurant', font: 'Manrope, sans-serif', weight: 700 },
   { name: 'Siebel Jewellery', font: 'Georgia, serif', weight: 600 },
 ]
 
@@ -59,31 +59,43 @@ const SERVICES = [
     n: '01',
     title: 'Кухни',
     text: 'От лаконичных решений до сложных авторских проектов — с точной посадкой по месту и вниманием к каждой линии.',
+    image: 'images/portfolio/kitchen-yantarny-village.jpg',
+    note: 'Точность до миллиметра',
   },
   {
     n: '02',
     title: 'Мебель для дома',
     text: 'Гардеробные, гостиные, спальни и детские, спроектированные как естественное продолжение интерьера.',
+    image: 'images/portfolio/apt-alye-parusa.jpg',
+    note: 'В ритме вашего дома',
   },
   {
     n: '03',
     title: 'Индивидуальные решения',
     text: 'Нестандартные формы, редкие материалы и сложная инженерия по эскизам архитектора или нашей команды.',
+    image: 'images/portfolio/house-kayani.jpg',
+    note: 'Без типовых модулей',
   },
   {
     n: '04',
     title: 'Коммерческие пространства',
     text: 'Ресепшн, офисы, рестораны и общественные зоны, где функциональность работает на впечатление от бренда.',
+    image: 'images/portfolio/foodcourt-park.jpg',
+    note: 'Функция становится образом',
   },
   {
     n: '05',
     title: 'Стекло и зеркала',
     text: 'Витрины, перегородки, фасады и зеркала с собственной обработкой и аккуратной интеграцией в проект.',
+    image: 'images/portfolio/apt-siversa.jpg',
+    note: 'Свет как материал',
   },
   {
     n: '06',
     title: 'Ритейл',
     text: 'Торговое оборудование для магазинов, салонов и шоурумов — единый стандарт от первого объекта до сети.',
+    image: 'images/portfolio/salon-avenue23.jpg',
+    note: 'Пространство работает на бренд',
   },
 ]
 
@@ -227,6 +239,12 @@ function Hero() {
       <LineField side="left" />
       <LineField side="right" />
       <TopLines />
+      <div className="hero-mobile-art" aria-hidden="true">
+        <span className="mobile-orbit mobile-orbit-a" />
+        <span className="mobile-orbit mobile-orbit-b" />
+        <span className="mobile-orbit mobile-orbit-c" />
+        <span className="mobile-art-core"><i>KFS</i></span>
+      </div>
 
       <div className="hero-content">
         <Marquee
@@ -275,7 +293,10 @@ function Clients() {
   return (
     <section className="clients" id="clients">
       <div className="clients-inner">
-        <p className="clients-label">Опыт в проектах для частных интерьеров, ритейла и HoReCa (гостиницы, рестораны и кафе)</p>
+        <div className="clients-copy">
+          <span className="clients-kicker">Опыт студии</span>
+          <p className="clients-label">Частные интерьеры, ритейл и HoReCa (гостиницы, рестораны и кафе)</p>
+        </div>
         <Marquee
           items={CLIENTS}
           className="clients-marquee"
@@ -351,24 +372,51 @@ function Portfolio() {
 }
 
 function Services() {
+  const [activeService, setActiveService] = useState(0)
+  const selected = SERVICES[activeService]
+
   return (
     <section className="services" id="services">
       <div className="services-inner">
         <div className="services-intro">
           <span className="eyebrow light">Возможности</span>
-          <h2 className="section-title light-title">От идеи до&nbsp;<span className="serif italic">последней детали</span></h2>
-          <p>Единая команда отвечает за проект, производство и монтаж — поэтому результат остаётся цельным.</p>
+          <h2 className="section-title light-title">Мастерская <span className="serif italic">без&nbsp;границ</span></h2>
+          <p>Выберите направление — пространство справа покажет характер работы, материалы и масштаб.</p>
+          <span className="services-signature">6 направлений · 1 производство</span>
         </div>
 
-        <div className="service-list">
-          {SERVICES.map((service) => (
-            <article className="service-row" key={service.n}>
-              <span className="service-n">{service.n}</span>
-              <h3>{service.title}</h3>
-              <p>{service.text}</p>
-              <ArrowUpRight className="service-arrow" size={21} strokeWidth={1.6} />
-            </article>
-          ))}
+        <div className="services-stage">
+          <div className="service-visual">
+            <img key={selected.n} src={asset(selected.image)} alt="" />
+            <div className="service-visual-shade" />
+            <span className="service-visual-number">{selected.n}</span>
+            <div className="service-visual-caption" key={`${selected.n}-caption`}>
+              <span>Khmelevsky studio</span>
+              <p>{selected.note}</p>
+            </div>
+            <span className="service-visual-orbit" aria-hidden="true" />
+          </div>
+
+          <div className="service-list" role="list">
+            {SERVICES.map((service, index) => (
+              <button
+                className={`service-option ${activeService === index ? 'is-active' : ''}`}
+                key={service.n}
+                type="button"
+                onMouseEnter={() => setActiveService(index)}
+                onFocus={() => setActiveService(index)}
+                onClick={() => setActiveService(index)}
+                aria-pressed={activeService === index}
+              >
+                <span className="service-n">{service.n}</span>
+                <span className="service-option-copy">
+                  <strong>{service.title}</strong>
+                  <span className="service-option-text">{service.text}</span>
+                </span>
+                <ArrowUpRight className="service-arrow" size={20} strokeWidth={1.6} />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -376,35 +424,63 @@ function Services() {
 }
 
 function About() {
+  const [activeStep, setActiveStep] = useState(0)
+  const [stepNumber, stepTitle, stepText] = PROCESS[activeStep]
+
   return (
     <section className="section about" id="about">
-      <div className="about-visual">
-        <img src={asset('images/portfolio/house-kayani.jpg')} alt="Интерьер, реализованный Khmelevsky Furniture Studio" loading="lazy" />
-        <span className="about-stamp">KFS · с 2015</span>
-      </div>
-
-      <div className="about-copy">
+      <div className="about-heading">
         <span className="eyebrow">О студии</span>
-        <h2 className="section-title">Красота начинается с&nbsp;<span className="serif italic">точности</span></h2>
-        <p className="about-lead">
-          Khmelevsky Furniture Studio — производство, проектная команда и монтаж в одном процессе.
-          Мы создаём мебель, которая точно отвечает архитектуре пространства и ритму жизни владельца.
-        </p>
-        <p className="about-text">
-          Работаем без посредников, соединяем современные технологии с ручным вниманием к материалу
-          и не выпускаем из поля зрения ни один этап — от замера до финальной регулировки фасада.
-        </p>
-        <a className="text-link" href="#contacts">Познакомиться со студией <ArrowUpRight size={18} /></a>
+        <h2 className="section-title">Не заполняем пространство. <span className="serif italic">Создаём его</span></h2>
       </div>
 
-      <div className="process-grid">
-        {PROCESS.map(([number, title, text]) => (
-          <article className="process-step" key={number}>
-            <span>{number}</span>
-            <h3>{title}</h3>
-            <p>{text}</p>
-          </article>
-        ))}
+      <div className="about-collage">
+        <div className="about-image-main">
+          <img src={asset('images/portfolio/house-kayani.jpg')} alt="Интерьер, реализованный Khmelevsky Furniture Studio" loading="lazy" />
+        </div>
+        <div className="about-image-float">
+          <img src={asset('images/portfolio/apt-siversa.jpg')} alt="Деталь авторского интерьера" loading="lazy" />
+        </div>
+        <span className="about-stamp"><b>2015</b><small>год основания</small></span>
+        <span className="about-orbit" aria-hidden="true"><i>форма</i><i>материал</i><i>ритм</i></span>
+      </div>
+
+      <div className="about-manifesto">
+        <p className="about-lead">Мебель должна ощущаться так, будто всегда была частью архитектуры</p>
+        <p className="about-text">Поэтому проектировщики, производство и монтажная команда работают как единая система. Мы не адаптируем готовые модули — начинаем с человека, его привычек и конкретного пространства.</p>
+        <div className="about-facts">
+          <span><b>10+</b><small>лет опыта</small></span>
+          <span><b>1</b><small>команда полного цикла</small></span>
+          <span><b>∞</b><small>вариантов исполнения</small></span>
+        </div>
+        <a className="text-link" href="#contacts">Обсудить идею <ArrowUpRight size={18} /></a>
+      </div>
+
+      <div className="process-lab">
+        <div className="process-head">
+          <span>Как рождается проект</span>
+          <span>{stepNumber} / 04</span>
+        </div>
+        <div className="process-progress"><span style={{ width: `${(activeStep + 1) * 25}%` }} /></div>
+        <div className="process-tabs" role="tablist" aria-label="Этапы работы">
+          {PROCESS.map(([number, title], index) => (
+            <button
+              key={number}
+              type="button"
+              className={activeStep === index ? 'is-active' : ''}
+              onClick={() => setActiveStep(index)}
+              aria-selected={activeStep === index}
+              role="tab"
+            >
+              <span>{number}</span>{title}
+            </button>
+          ))}
+        </div>
+        <div className="process-detail" key={stepNumber}>
+          <span>{stepNumber}</span>
+          <h3>{stepTitle}</h3>
+          <p>{stepText}</p>
+        </div>
       </div>
     </section>
   )
