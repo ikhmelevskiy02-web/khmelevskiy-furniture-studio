@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import {
   ChevronUp,
   X,
@@ -47,14 +47,14 @@ const SERVICES_TICKER = [
 ]
 
 const CLIENTS = [
-  { name: 'BEELINE', font: 'system-ui', weight: 800 },
-  { name: 'SOKOLOV', font: 'Georgia, serif', weight: 600 },
-  { name: '585 GOLD', font: 'Inter, sans-serif', weight: 700 },
-  { name: 'ARMANI', font: '"Cormorant Garamond", serif', weight: 500 },
-  { name: 'Picart', font: '"Source Serif 4", serif', weight: 600 },
-  { name: 'SOHO', font: 'system-ui', weight: 700 },
-  { name: 'RED', font: 'Inter, sans-serif', weight: 800 },
-  { name: 'Siebel', font: 'Georgia, serif', weight: 600 },
+  { name: 'Beeline', mark: 'B', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'SOKOLOV', mark: 'S', font: 'Georgia, serif', weight: 600 },
+  { name: '585 Gold', mark: '585', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'Armani', mark: 'A', font: '"Source Serif 4", serif', weight: 600 },
+  { name: 'Picart', mark: 'P', font: '"Source Serif 4", serif', weight: 600 },
+  { name: 'SOHO', mark: 'SH', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'RED', mark: 'R', font: 'Inter, sans-serif', weight: 800 },
+  { name: 'Siebel', mark: 'Si', font: 'Georgia, serif', weight: 600 },
 ]
 
 /* ------------------------------------------------------------------ */
@@ -75,7 +75,7 @@ function Navbar() {
       <header className="navbar">
         <div className="navbar-inner">
           <a href="#top" className="brand" aria-label="Khmelevsky Furniture Studio">
-            <img src={asset('logo.png')} alt="Khmelevsky Furniture Studio" className="brand-logo" />
+            <img src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" className="brand-logo" />
           </a>
 
           <nav className="navbar-links">
@@ -99,7 +99,7 @@ function Navbar() {
 
       <div className={`drawer ${open ? 'is-open' : ''}`} aria-hidden={!open}>
         <div className="drawer-top">
-          <img src={asset('logo.png')} alt="" className="drawer-logo" />
+          <img src={asset('logo-dark.png')} alt="" className="drawer-logo" />
           <button className="menu-pill dark" onClick={() => setOpen(false)} aria-label="Закрыть меню">
             Закрыть
             <X size={16} strokeWidth={2.2} />
@@ -216,7 +216,9 @@ function Hero() {
           </a>
 
           <a className="btn-book" href={CONTACTS.phoneHref}>
-            <img src={asset('logo.png')} alt="" className="btn-book-avatar" />
+            <span className="btn-book-avatar">
+              <Phone size={18} strokeWidth={2} />
+            </span>
             <span className="btn-book-text">
               <span className="btn-book-primary">{CONTACTS.phoneLabel}</span>
               <span className="btn-book-secondary">
@@ -245,11 +247,14 @@ function Clients() {
           items={CLIENTS}
           className="clients-marquee"
           renderItem={(c) => (
-            <span
-              className="client-logo"
-              style={{ fontFamily: c.font, fontWeight: c.weight }}
-            >
-              {c.name}
+            <span className="client-logo">
+              <span className="client-mark">{c.mark}</span>
+              <span
+                className="client-name"
+                style={{ fontFamily: c.font, fontWeight: c.weight }}
+              >
+                {c.name}
+              </span>
             </span>
           )}
         />
@@ -509,7 +514,7 @@ function Footer() {
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-brand">
-          <img src={asset('logo.png')} alt="Khmelevsky Furniture Studio" />
+          <img src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" />
           <p>Мебель на заказ. {CONTACTS.city}.</p>
         </div>
 

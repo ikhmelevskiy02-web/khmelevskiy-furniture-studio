@@ -14,7 +14,7 @@
   --panel: #f6f5f3;
   --green: #17c964;
   --serif: 'Source Serif 4', Georgia, serif;
-  --script: 'Cormorant Garamond', 'Source Serif 4', serif;
+  --script: 'Source Serif 4', Georgia, serif;
   --maxw: 1200px;
 }
 
@@ -60,7 +60,7 @@ button {
 
 .italic {
   font-style: italic;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.035em;
 }
 
 /* ---------------------------------------------------------------- */
@@ -250,30 +250,8 @@ button {
   justify-content: center;
   overflow: hidden;
   isolation: isolate;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1920&q=80');
-  background-size: cover;
-  background-position: center;
-  filter: grayscale(1) contrast(1.02) brightness(1.04);
-  z-index: -2;
-}
-
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.72) 0%,
-    rgba(255, 255, 255, 0.62) 45%,
-    rgba(255, 255, 255, 0.8) 100%
-  );
-  z-index: -1;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #ffffff 0%, #f5f4f2 60%, #efeeeb 100%);
 }
 
 /* Декоративные изогнутые линии */
@@ -301,7 +279,7 @@ button {
   height: 62vh;
   max-height: 720px;
   margin: 0 -20px;
-  border: 2.5px solid #ffffff;
+  border: 2px solid rgba(10, 10, 10, 0.12);
   opacity: 0;
   animation: line-pulse 5s ease-in-out infinite;
 }
@@ -329,7 +307,7 @@ button {
 .hero-lines-top .hero-line {
   width: 62vw;
   margin: -14px 0;
-  border: 2.5px solid #ffffff;
+  border: 2px solid rgba(10, 10, 10, 0.1);
   border-top: none;
   border-radius: 0 0 80% 80% / 0 0 50% 50%;
   opacity: 0;
@@ -367,19 +345,23 @@ button {
 }
 
 .hero-title {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0;
-  font-size: 84px;
+  font-size: 82px;
   line-height: 1.02;
   letter-spacing: -0.06em;
   font-weight: 600;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .hero-title .serif {
   font-family: var(--script);
-  font-weight: 500;
-  font-size: 1.06em;
-  letter-spacing: -0.02em;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.08em;
+  letter-spacing: -0.04em;
 }
 
 .hero-subtitle {
@@ -440,9 +422,12 @@ button {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  object-fit: cover;
   background: #0a0a0a;
-  padding: 5px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
 }
 
 .btn-book-text {
@@ -519,14 +504,42 @@ button {
 }
 
 .clients-marquee .marquee-track {
-  gap: 44px;
+  gap: 40px;
 }
 
 .client-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.client-logo:hover {
+  opacity: 1;
+}
+
+.client-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(10, 10, 10, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0a0a0a;
+  flex: none;
+}
+
+.client-name {
   font-size: 18px;
   color: #0a0a0a;
-  opacity: 0.72;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------------- */
@@ -1073,7 +1086,9 @@ button {
     display: flex;
   }
   .hero-title {
-    font-size: clamp(40px, 12vw, 52px);
+    font-size: clamp(31px, 8.6vw, 46px);
+    letter-spacing: -0.045em;
+    max-width: 100%;
   }
   .hero-subtitle {
     font-size: 16px;
@@ -1139,6 +1154,9 @@ button {
   }
   .brand-logo,
   .drawer-logo {
-    height: 34px;
+    height: 30px;
+  }
+  .hero-title {
+    font-size: clamp(28px, 8.4vw, 38px);
   }
 }
