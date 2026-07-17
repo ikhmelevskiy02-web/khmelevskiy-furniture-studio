@@ -106,13 +106,8 @@ const LEGAL = {
   director: 'Хмелевский Олег Валентинович',
 }
 
-function Wordmark({ light = false }) {
-  return (
-    <span className={`wordmark ${light ? 'wordmark-light' : ''}`}>
-      <span className="wordmark-name">Khmelevsky</span>
-      <span className="wordmark-note">furniture studio</span>
-    </span>
-  )
+function BrandLogo() {
+  return <img className="brand-logo" src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" />
 }
 
 function Navbar() {
@@ -141,7 +136,7 @@ function Navbar() {
       <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
           <a href="#top" aria-label="Khmelevsky Furniture Studio — на главную">
-            <Wordmark />
+            <BrandLogo />
           </a>
 
           <button
@@ -159,7 +154,7 @@ function Navbar() {
 
       <div className={`drawer ${open ? 'is-open' : ''}`} aria-hidden={!open}>
         <div className="drawer-top">
-          <Wordmark />
+          <BrandLogo />
           <button className="menu-pill" type="button" onClick={() => setOpen(false)} aria-label="Закрыть меню">
             Закрыть
             <X size={16} strokeWidth={2.1} />
@@ -243,7 +238,7 @@ function Hero() {
         <p className="hero-kicker">Мебельная студия полного цикла · {CONTACTS.city}</p>
 
         <h1 className="hero-title">
-          Мебель, созданная <span className="serif italic">для&nbsp;вас.</span>
+          Мебель, созданная <span className="serif italic">для&nbsp;вас</span>
         </h1>
 
         <p className="hero-subtitle">
@@ -328,7 +323,7 @@ function Portfolio() {
       <div className="section-head editorial-head">
         <div>
           <span className="eyebrow">Избранные проекты</span>
-          <h2 className="section-title">Пространства с&nbsp;<span className="serif italic">характером.</span></h2>
+          <h2 className="section-title">Пространства с&nbsp;<span className="serif italic">характером</span></h2>
         </div>
         <p className="section-lead">
           Частные и коммерческие интерьеры, где мебель становится частью архитектуры, а не просто заполняет пространство.
@@ -361,7 +356,7 @@ function Services() {
       <div className="services-inner">
         <div className="services-intro">
           <span className="eyebrow light">Возможности</span>
-          <h2 className="section-title light-title">От идеи до&nbsp;<span className="serif italic">последней детали.</span></h2>
+          <h2 className="section-title light-title">От идеи до&nbsp;<span className="serif italic">последней детали</span></h2>
           <p>Единая команда отвечает за проект, производство и монтаж — поэтому результат остаётся цельным.</p>
         </div>
 
@@ -390,7 +385,7 @@ function About() {
 
       <div className="about-copy">
         <span className="eyebrow">О студии</span>
-        <h2 className="section-title">Красота начинается с&nbsp;<span className="serif italic">точности.</span></h2>
+        <h2 className="section-title">Красота начинается с&nbsp;<span className="serif italic">точности</span></h2>
         <p className="about-lead">
           Khmelevsky Furniture Studio — производство, проектная команда и монтаж в одном процессе.
           Мы создаём мебель, которая точно отвечает архитектуре пространства и ритму жизни владельца.
@@ -451,7 +446,7 @@ function CallbackForm() {
       <div className="form-done">
         <span className="form-done-icon"><Check size={22} strokeWidth={2.2} /></span>
         <p className="form-kicker">Заявка отправлена</p>
-        <h3>Спасибо, скоро свяжемся.</h3>
+        <h3>Спасибо, скоро свяжемся</h3>
         <p>Если удобнее продолжить сейчас — напишите нам в Telegram.</p>
         <a className="btn-primary btn-light" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
           Открыть Telegram <ArrowUpRight size={18} />
@@ -463,7 +458,7 @@ function CallbackForm() {
   return (
     <form className="callback" onSubmit={submit}>
       <p className="form-kicker">Оставить заявку</p>
-      <h3>Давайте обсудим ваш проект.</h3>
+      <h3>Давайте обсудим ваш проект</h3>
 
       <label className="field">
         <span>Ваше имя</span>
@@ -494,7 +489,7 @@ function Contact() {
       <div className="contacts-inner">
         <div className="contacts-copy">
           <span className="eyebrow light">Контакты</span>
-          <h2>Начнём с&nbsp;<span className="serif italic">разговора.</span></h2>
+          <h2>Начнём с&nbsp;<span className="serif italic">разговора</span></h2>
           <p>Расскажите об идее, пространстве и желаемых сроках — мы предложим следующий шаг.</p>
 
           <div className="contact-links">
@@ -515,7 +510,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-main">
-        <Wordmark />
+        <BrandLogo />
         <p>Индивидуальная мебель и интерьеры полного цикла. {CONTACTS.city}.</p>
         <a className="footer-top" href="#top">Наверх <ChevronUp size={16} /></a>
       </div>
