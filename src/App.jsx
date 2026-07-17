@@ -275,7 +275,7 @@ function Clients() {
   return (
     <section className="clients" id="clients">
       <div className="clients-inner">
-        <p className="clients-label">Опыт в проектах для частных интерьеров, ритейла и HoReCa</p>
+        <p className="clients-label">Опыт в проектах для частных интерьеров, ритейла и HoReCa (гостиницы, рестораны и кафе)</p>
         <Marquee
           items={CLIENTS}
           className="clients-marquee"
