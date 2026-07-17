@@ -9,6 +9,10 @@ import {
   MapPin,
   Plus,
   Check,
+  Layers,
+  Hammer,
+  Gem,
+  ShieldCheck,
 } from 'lucide-react'
 import { categories, projects } from './data/portfolio.js'
 import './App.css'
@@ -199,10 +203,11 @@ function Hero() {
           renderItem={(t) => <span className="ticker-chip">{t}</span>}
         />
 
+        <span className="hero-eyebrow">Мебельная студия · {CONTACTS.city}</span>
+
         <h1 className="hero-title">
-          Эксклюзивная мебель
-          <br />
-          <span className="serif italic">на&nbsp;заказ</span>
+          <span className="hero-title-1">Эксклюзивная мебель</span>
+          <span className="hero-title-2 serif italic">на&nbsp;заказ</span>
         </h1>
 
         <p className="hero-subtitle">
@@ -416,10 +421,10 @@ function Services() {
 /*  О студии                                                           */
 /* ------------------------------------------------------------------ */
 const FEATURES = [
-  { title: 'Полный цикл', text: 'От замера и 3D-проекта до монтажа — работаем без посредников.' },
-  { title: 'Собственное производство', text: 'Контролируем качество на каждом этапе изготовления.' },
-  { title: 'Индивидуальный проект', text: 'Каждое изделие проектируется под ваше пространство.' },
-  { title: 'Современные технологии', text: 'Передовое оборудование и проверенные материалы.' },
+  { icon: Layers, title: 'Полный цикл', text: 'От замера и 3D-проекта до монтажа — работаем без посредников.' },
+  { icon: Hammer, title: 'Собственное производство', text: 'Контролируем качество на каждом этапе изготовления.' },
+  { icon: Gem, title: 'Индивидуальный проект', text: 'Каждое изделие проектируется под ваше пространство.' },
+  { icon: ShieldCheck, title: 'Современные технологии', text: 'Передовое оборудование и проверенные материалы.' },
 ]
 
 function About() {
@@ -448,13 +453,24 @@ function About() {
           </a>
         </div>
 
-        <div className="about-features">
-          {FEATURES.map((f) => (
-            <div className="feature" key={f.title}>
-              <h3 className="feature-title">{f.title}</h3>
-              <p className="feature-text">{f.text}</p>
-            </div>
-          ))}
+        <div className="about-panel">
+          <span className="about-panel-label">Принципы студии</span>
+          <ul className="principles">
+            {FEATURES.map((f) => {
+              const Icon = f.icon
+              return (
+                <li className="principle" key={f.title}>
+                  <span className="principle-icon">
+                    <Icon size={20} strokeWidth={1.6} />
+                  </span>
+                  <div className="principle-body">
+                    <h3 className="principle-title">{f.title}</h3>
+                    <p className="principle-text">{f.text}</p>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
         </div>
       </div>
     </section>
