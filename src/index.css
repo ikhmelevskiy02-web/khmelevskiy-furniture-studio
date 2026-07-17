@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Оформление сайта вынесено в src/App.css (кастомный CSS, а не утилиты Tailwind),
+  как задано в образце. Tailwind подключён на случай точечных правок.
+*/
