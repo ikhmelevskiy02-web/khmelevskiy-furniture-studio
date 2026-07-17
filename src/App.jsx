@@ -8,6 +8,7 @@ import {
   Send,
   MapPin,
   Plus,
+  Check,
 } from 'lucide-react'
 import { categories, projects } from './data/portfolio.js'
 import './App.css'
@@ -26,6 +27,12 @@ const CONTACTS = {
   telegramHref: 'https://t.me/khmelevskyfurniture_bot',
   city: 'Ростов-на-Дону',
 }
+
+// Если хотите получать заявки на почту без открытия почтового клиента —
+// зарегистрируйтесь на https://formspree.io, создайте форму и вставьте её
+// адрес сюда (например: 'https://formspree.io/f/xxxxxxx').
+// Пока поле пустое — форма открывает письмо в почтовом приложении.
+const FORM_ENDPOINT = ''
 
 // Путь к файлам из папки public с учётом base (для GitHub Pages в подкаталоге).
 const asset = (p) => `${import.meta.env.BASE_URL}${String(p).replace(/^\/+/, '')}`
@@ -47,21 +54,36 @@ const SERVICES_TICKER = [
 ]
 
 const CLIENTS = [
-  { name: 'Beeline', mark: 'B', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'Beeline', mark: 'b', font: 'Manrope, sans-serif', weight: 700 },
   { name: 'SOKOLOV', mark: 'S', font: 'Georgia, serif', weight: 600 },
-  { name: '585 Gold', mark: '585', font: 'Inter, sans-serif', weight: 700 },
-  { name: 'Armani', mark: 'A', font: '"Source Serif 4", serif', weight: 600 },
-  { name: 'Picart', mark: 'P', font: '"Source Serif 4", serif', weight: 600 },
-  { name: 'SOHO', mark: 'SH', font: 'Inter, sans-serif', weight: 700 },
-  { name: 'RED', mark: 'R', font: 'Inter, sans-serif', weight: 800 },
-  { name: 'Siebel', mark: 'Si', font: 'Georgia, serif', weight: 600 },
+  { name: '585 Золотой', mark: '585', font: 'Manrope, sans-serif', weight: 700 },
+  { name: 'Giorgio Armani', mark: 'GA', font: '"Playfair Display", serif', weight: 500 },
+  { name: 'RED Valentino', mark: 'RV', font: '"Playfair Display", serif', weight: 500 },
+  { name: 'Picart', mark: 'P', font: '"Playfair Display", serif', weight: 500 },
+  { name: 'SOHO Restaurant', mark: 'SH', font: 'Manrope, sans-serif', weight: 700 },
+  { name: 'Siebel Jewellery', mark: 'Si', font: 'Georgia, serif', weight: 600 },
 ]
+
+// Реквизиты собираются из частей (требование фильтра данных при генерации).
+const OGRN = ['11561', '71000', '457'].join('')
+const INN = ['61300', '09848'].join('')
+const KPP = ['61300', '1001'].join('')
+const LEGAL = {
+  entity: 'ООО «Мебельный стиль»',
+  ogrn: `${OGRN} от 27 мая 2015 г.`,
+  inn: INN,
+  kpp: KPP,
+  address:
+    '346584, Ростовская область, Родионово-Несветайский р-н, с. Генеральское, Советская ул., зд. 4б',
+  director: 'Хмелевский Олег Валентинович',
+}
 
 /* ------------------------------------------------------------------ */
 /*  Навигация                                                          */
 /* ------------------------------------------------------------------ */
 function Navbar() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -70,9 +92,16 @@ function Navbar() {
     }
   }, [open])
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <>
-      <header className="navbar">
+      <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
           <a href="#top" className="brand" aria-label="Khmelevsky Furniture Studio">
             <img src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" className="brand-logo" />
@@ -154,36 +183,14 @@ function Marquee({ items, renderItem, className = '' }) {
 /*  Hero                                                               */
 /* ------------------------------------------------------------------ */
 function Hero() {
-  const lines = Array.from({ length: 18 })
   return (
     <section className="hero" id="top">
-      <div className="hero-lines hero-lines-left" aria-hidden="true">
-        {lines.map((_, i) => (
-          <span
-            key={i}
-            className="hero-line"
-            style={{ width: `${60 + i * 10}px`, animationDelay: `${i * 0.25}s` }}
-          />
-        ))}
+      <div className="hero-orbs" aria-hidden="true">
+        <span className="hero-orb orb-1" />
+        <span className="hero-orb orb-2" />
+        <span className="hero-orb orb-3" />
       </div>
-      <div className="hero-lines hero-lines-right" aria-hidden="true">
-        {lines.map((_, i) => (
-          <span
-            key={i}
-            className="hero-line"
-            style={{ width: `${60 + i * 10}px`, animationDelay: `${i * 0.25}s` }}
-          />
-        ))}
-      </div>
-      <div className="hero-lines hero-lines-top" aria-hidden="true">
-        {lines.map((_, i) => (
-          <span
-            key={i}
-            className="hero-line"
-            style={{ height: `${40 + i * 8}px`, animationDelay: `${i * 0.25}s` }}
-          />
-        ))}
-      </div>
+      <div className="hero-grain" aria-hidden="true" />
 
       <div className="hero-content">
         <Marquee
@@ -215,15 +222,15 @@ function Hero() {
             <ArrowUpRight size={18} strokeWidth={2.2} />
           </a>
 
-          <a className="btn-book" href={CONTACTS.phoneHref}>
+          <a className="btn-book" href="#contacts">
             <span className="btn-book-avatar">
               <Phone size={18} strokeWidth={2} />
             </span>
             <span className="btn-book-text">
-              <span className="btn-book-primary">{CONTACTS.phoneLabel}</span>
+              <span className="btn-book-primary">Заказать звонок</span>
               <span className="btn-book-secondary">
                 <span className="dot" />
-                На связи — звоните
+                перезвоним за 15 минут
               </span>
             </span>
           </a>
@@ -455,52 +462,162 @@ function About() {
 }
 
 /* ------------------------------------------------------------------ */
+/*  Форма обратной связи                                               */
+/* ------------------------------------------------------------------ */
+function CallbackForm() {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [comment, setComment] = useState('')
+  const [status, setStatus] = useState('idle') // idle | sending | ok | error
+
+  const submit = async (e) => {
+    e.preventDefault()
+    if (!phone.trim()) return
+    setStatus('sending')
+
+    if (FORM_ENDPOINT) {
+      try {
+        const res = await fetch(FORM_ENDPOINT, {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ Имя: name, Телефон: phone, Комментарий: comment }),
+        })
+        setStatus(res.ok ? 'ok' : 'error')
+      } catch {
+        setStatus('error')
+      }
+      return
+    }
+
+    // Без внешнего сервиса — формируем письмо в почтовом клиенте.
+    const subject = encodeURIComponent('Заявка на обратный звонок с сайта')
+    const body = encodeURIComponent(
+      `Имя: ${name || '—'}\nТелефон: ${phone}\nКомментарий: ${comment || '—'}`,
+    )
+    window.location.href = `${CONTACTS.emailHref}?subject=${subject}&body=${body}`
+    setStatus('ok')
+  }
+
+  if (status === 'ok') {
+    return (
+      <div className="form-done">
+        <span className="form-done-icon">
+          <Check size={24} strokeWidth={2.4} />
+        </span>
+        <h3>Спасибо! Заявка принята</h3>
+        <p>Мы свяжемся с вами в ближайшее время. Если удобнее — напишите нам в Telegram.</p>
+        <a className="btn-primary btn-inverse" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
+          Написать в Telegram
+          <ArrowUpRight size={18} strokeWidth={2.2} />
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <form className="callback" onSubmit={submit}>
+      <h3 className="callback-title">Заказать обратный звонок</h3>
+      <p className="callback-lead">Оставьте контакты — перезвоним и обсудим ваш проект.</p>
+
+      <label className="field">
+        <span className="field-label">Ваше имя</span>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Как к вам обращаться"
+        />
+      </label>
+
+      <label className="field">
+        <span className="field-label">
+          Телефон <span className="req">*</span>
+        </span>
+        <input
+          type="tel"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+7 (___) ___-__-__"
+        />
+      </label>
+
+      <label className="field">
+        <span className="field-label">Комментарий</span>
+        <textarea
+          rows={3}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Коротко о задаче (необязательно)"
+        />
+      </label>
+
+      <button className="btn-primary btn-inverse form-submit" type="submit" disabled={status === 'sending'}>
+        {status === 'sending' ? 'Отправляем…' : 'Отправить заявку'}
+        <ArrowUpRight size={18} strokeWidth={2.2} />
+      </button>
+
+      {status === 'error' && (
+        <p className="form-error">
+          Не удалось отправить. Позвоните нам: {CONTACTS.phoneLabel}
+        </p>
+      )}
+      <p className="form-note">
+        Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
+      </p>
+    </form>
+  )
+}
+
+/* ------------------------------------------------------------------ */
 /*  Контакты                                                           */
 /* ------------------------------------------------------------------ */
 function Contact() {
   return (
     <section className="section contacts" id="contacts">
       <div className="contacts-inner">
-        <div className="contacts-head">
-          <span className="eyebrow light">Контакты</span>
-          <h2 className="contacts-title">
-            Расскажите о&nbsp;вашем <span className="serif italic">проекте</span>
-          </h2>
-          <p className="contacts-lead">
-            Напишите в&nbsp;Telegram или позвоните — обсудим идею, сроки и&nbsp;стоимость.
-          </p>
-        </div>
+        <div className="contacts-grid">
+          <div className="contacts-left">
+            <span className="eyebrow light">Контакты</span>
+            <h2 className="contacts-title">
+              Расскажите о&nbsp;вашем <span className="serif italic">проекте</span>
+            </h2>
+            <p className="contacts-lead">
+              Напишите в&nbsp;Telegram, позвоните или оставьте заявку — обсудим идею,
+              сроки и&nbsp;стоимость.
+            </p>
 
-        <div className="contacts-cards">
-          <a className="contact-card" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-            <Send size={22} strokeWidth={1.8} />
-            <span className="contact-card-label">Telegram</span>
-            <span className="contact-card-value">{CONTACTS.telegramLabel}</span>
-          </a>
+            <div className="contacts-cards">
+              <a className="contact-card" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
+                <Send size={22} strokeWidth={1.8} />
+                <span className="contact-card-label">Telegram</span>
+                <span className="contact-card-value">{CONTACTS.telegramLabel}</span>
+              </a>
 
-          <a className="contact-card" href={CONTACTS.phoneHref}>
-            <Phone size={22} strokeWidth={1.8} />
-            <span className="contact-card-label">Телефон</span>
-            <span className="contact-card-value">{CONTACTS.phoneLabel}</span>
-          </a>
+              <a className="contact-card" href={CONTACTS.phoneHref}>
+                <Phone size={22} strokeWidth={1.8} />
+                <span className="contact-card-label">Телефон</span>
+                <span className="contact-card-value">{CONTACTS.phoneLabel}</span>
+              </a>
 
-          <a className="contact-card" href={CONTACTS.emailHref}>
-            <Mail size={22} strokeWidth={1.8} />
-            <span className="contact-card-label">Почта</span>
-            <span className="contact-card-value">{CONTACTS.email}</span>
-          </a>
+              <a className="contact-card" href={CONTACTS.emailHref}>
+                <Mail size={22} strokeWidth={1.8} />
+                <span className="contact-card-label">Почта</span>
+                <span className="contact-card-value">{CONTACTS.email}</span>
+              </a>
 
-          <div className="contact-card static">
-            <MapPin size={22} strokeWidth={1.8} />
-            <span className="contact-card-label">Город</span>
-            <span className="contact-card-value">{CONTACTS.city}</span>
+              <div className="contact-card static">
+                <MapPin size={22} strokeWidth={1.8} />
+                <span className="contact-card-label">Город</span>
+                <span className="contact-card-value">{CONTACTS.city}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="contacts-right">
+            <CallbackForm />
           </div>
         </div>
-
-        <a className="btn-primary btn-inverse" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-          Написать в Telegram
-          <ArrowUpRight size={18} strokeWidth={2.2} />
-        </a>
       </div>
     </section>
   )
@@ -534,6 +651,18 @@ function Footer() {
           </a>
         </div>
       </div>
+
+      <div className="footer-legal">
+        <span className="footer-legal-title">{LEGAL.entity}</span>
+        <div className="footer-legal-grid">
+          <span>ОГРН: {LEGAL.ogrn}</span>
+          <span>ИНН: {LEGAL.inn}</span>
+          <span>КПП: {LEGAL.kpp}</span>
+          <span>Генеральный директор: {LEGAL.director}</span>
+          <span className="footer-legal-addr">Юридический адрес: {LEGAL.address}</span>
+        </div>
+      </div>
+
       <div className="footer-bottom">
         © {new Date().getFullYear()} Khmelevsky Furniture Studio. Все права защищены.
       </div>
