@@ -227,7 +227,7 @@ function Hero() {
             <ArrowUpRight size={18} strokeWidth={2.2} />
           </a>
 
-          <a className="btn-book" href="#contacts">
+          <a className="btn-book" href="#callback">
             <span className="btn-book-avatar">
               <Phone size={18} strokeWidth={2} />
             </span>
@@ -630,7 +630,7 @@ function Contact() {
             </div>
           </div>
 
-          <div className="contacts-right">
+          <div className="contacts-right" id="callback">
             <CallbackForm />
           </div>
         </div>
