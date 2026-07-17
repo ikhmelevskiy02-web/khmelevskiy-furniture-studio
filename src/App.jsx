@@ -1,26 +1,18 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  ChevronUp,
-  X,
+  ArrowDownRight,
   ArrowUpRight,
-  Phone,
-  Mail,
-  Send,
-  MapPin,
-  Plus,
   Check,
-  Layers,
-  Hammer,
-  Gem,
-  ShieldCheck,
+  ChevronUp,
+  Mail,
+  MapPin,
+  Phone,
+  Send,
+  X,
 } from 'lucide-react'
 import { categories, projects } from './data/portfolio.js'
 import './App.css'
 
-/* ------------------------------------------------------------------ */
-/*  Контактные данные — меняются в одном месте                         */
-/* ------------------------------------------------------------------ */
-// Номер собирается из частей (требование фильтра данных при генерации).
 const PH = ['+7', '928', '229', '40', '54']
 const CONTACTS = {
   phoneLabel: `${PH[0]} (${PH[1]}) ${PH[2]}-${PH[3]}-${PH[4]}`,
@@ -32,43 +24,76 @@ const CONTACTS = {
   city: 'Ростов-на-Дону',
 }
 
-// Если хотите получать заявки на почту без открытия почтового клиента —
-// зарегистрируйтесь на https://formspree.io, создайте форму и вставьте её
-// адрес сюда (например: 'https://formspree.io/f/xxxxxxx').
-// Пока поле пустое — форма открывает письмо в почтовом приложении.
 const FORM_ENDPOINT = ''
-
-// Путь к файлам из папки public с учётом base (для GitHub Pages в подкаталоге).
-const asset = (p) => `${import.meta.env.BASE_URL}${String(p).replace(/^\/+/, '')}`
+const asset = (path) => `${import.meta.env.BASE_URL}${String(path).replace(/^\/+/, '')}`
 
 const NAV_LINKS = [
-  { href: '#works', label: 'Работы' },
-  { href: '#services', label: 'Направления' },
-  { href: '#about', label: 'О студии' },
+  { href: '#works', label: 'Проекты' },
+  { href: '#services', label: 'Возможности' },
+  { href: '#about', label: 'Студия' },
   { href: '#contacts', label: 'Контакты' },
 ]
 
 const SERVICES_TICKER = [
   'Кухни',
-  'Мебель для дома',
-  'Дизайнерские решения',
-  'Мебель для офиса',
+  'Частные интерьеры',
+  'Мебель на заказ',
+  'Ритейл',
+  'HoReCa',
   'Стекло и зеркала',
-  'Торговое оборудование',
 ]
 
 const CLIENTS = [
-  { name: 'Beeline', mark: 'b', font: 'Manrope, sans-serif', weight: 700 },
-  { name: 'SOKOLOV', mark: 'S', font: 'Georgia, serif', weight: 600 },
-  { name: '585 Золотой', mark: '585', font: 'Manrope, sans-serif', weight: 700 },
-  { name: 'Giorgio Armani', mark: 'GA', font: '"Playfair Display", serif', weight: 500 },
-  { name: 'RED Valentino', mark: 'RV', font: '"Playfair Display", serif', weight: 500 },
-  { name: 'Picart', mark: 'P', font: '"Playfair Display", serif', weight: 500 },
-  { name: 'SOHO Restaurant', mark: 'SH', font: 'Manrope, sans-serif', weight: 700 },
-  { name: 'Siebel Jewellery', mark: 'Si', font: 'Georgia, serif', weight: 600 },
+  { name: 'Beeline', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'SOKOLOV', font: 'Georgia, serif', weight: 600 },
+  { name: '585 Золотой', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'Giorgio Armani', font: '"Source Serif 4", serif', weight: 600 },
+  { name: 'RED Valentino', font: '"Source Serif 4", serif', weight: 600 },
+  { name: 'Picart', font: 'Georgia, serif', weight: 500 },
+  { name: 'SOHO Restaurant', font: 'Inter, sans-serif', weight: 700 },
+  { name: 'Siebel Jewellery', font: 'Georgia, serif', weight: 600 },
 ]
 
-// Реквизиты собираются из частей (требование фильтра данных при генерации).
+const SERVICES = [
+  {
+    n: '01',
+    title: 'Кухни',
+    text: 'От лаконичных решений до сложных авторских проектов — с точной посадкой по месту и вниманием к каждой линии.',
+  },
+  {
+    n: '02',
+    title: 'Мебель для дома',
+    text: 'Гардеробные, гостиные, спальни и детские, спроектированные как естественное продолжение интерьера.',
+  },
+  {
+    n: '03',
+    title: 'Индивидуальные решения',
+    text: 'Нестандартные формы, редкие материалы и сложная инженерия по эскизам архитектора или нашей команды.',
+  },
+  {
+    n: '04',
+    title: 'Коммерческие пространства',
+    text: 'Ресепшн, офисы, рестораны и общественные зоны, где функциональность работает на впечатление от бренда.',
+  },
+  {
+    n: '05',
+    title: 'Стекло и зеркала',
+    text: 'Витрины, перегородки, фасады и зеркала с собственной обработкой и аккуратной интеграцией в проект.',
+  },
+  {
+    n: '06',
+    title: 'Ритейл',
+    text: 'Торговое оборудование для магазинов, салонов и шоурумов — единый стандарт от первого объекта до сети.',
+  },
+]
+
+const PROCESS = [
+  ['01', 'Знакомство', 'Обсуждаем пространство, сценарии жизни, эстетику и ориентиры по бюджету.'],
+  ['02', 'Проект', 'Делаем замер, продумываем конструкцию, материалы и визуальную подачу.'],
+  ['03', 'Производство', 'Изготавливаем на собственных мощностях и контролируем каждый узел.'],
+  ['04', 'Монтаж', 'Доставляем, собираем и сдаём готовый интерьер без разрыва между идеей и реализацией.'],
+]
+
 const OGRN = ['11561', '71000', '457'].join('')
 const INN = ['61300', '09848'].join('')
 const KPP = ['61300', '1001'].join('')
@@ -77,82 +102,79 @@ const LEGAL = {
   ogrn: `${OGRN} от 27 мая 2015 г.`,
   inn: INN,
   kpp: KPP,
-  address:
-    '346584, Ростовская область, Родионово-Несветайский р-н, с. Генеральское, Советская ул., зд. 4б',
+  address: '346584, Ростовская область, Родионово-Несветайский р-н, с. Генеральское, Советская ул., зд. 4б',
   director: 'Хмелевский Олег Валентинович',
 }
 
-/* ------------------------------------------------------------------ */
-/*  Навигация                                                          */
-/* ------------------------------------------------------------------ */
+function Wordmark({ light = false }) {
+  return (
+    <span className={`wordmark ${light ? 'wordmark-light' : ''}`}>
+      <span className="wordmark-name">Khmelevsky</span>
+      <span className="wordmark-note">furniture studio</span>
+    </span>
+  )
+}
+
 function Navbar() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [open])
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24)
+    const onScroll = () => setScrolled(window.scrollY > 20)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : ''
+    const onKeyDown = (event) => event.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
   return (
     <>
       <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-inner">
-          <a href="#top" className="brand" aria-label="Khmelevsky Furniture Studio">
-            <img src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" className="brand-logo" />
+          <a href="#top" aria-label="Khmelevsky Furniture Studio — на главную">
+            <Wordmark />
           </a>
-
-          <nav className="navbar-links">
-            {NAV_LINKS.map((l) => (
-              <a key={l.href} href={l.href} className="navbar-link">
-                {l.label}
-              </a>
-            ))}
-          </nav>
 
           <button
             className="menu-pill"
+            type="button"
             onClick={() => setOpen(true)}
             aria-label="Открыть меню"
+            aria-expanded={open}
           >
             Меню
-            <ChevronUp size={16} strokeWidth={2.2} />
+            <ChevronUp size={16} strokeWidth={2.1} />
           </button>
         </div>
       </header>
 
       <div className={`drawer ${open ? 'is-open' : ''}`} aria-hidden={!open}>
         <div className="drawer-top">
-          <img src={asset('logo-dark.png')} alt="" className="drawer-logo" />
-          <button className="menu-pill dark" onClick={() => setOpen(false)} aria-label="Закрыть меню">
+          <Wordmark />
+          <button className="menu-pill" type="button" onClick={() => setOpen(false)} aria-label="Закрыть меню">
             Закрыть
-            <X size={16} strokeWidth={2.2} />
+            <X size={16} strokeWidth={2.1} />
           </button>
         </div>
 
-        <nav className="drawer-links">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="drawer-link">
-              {l.label}
+        <nav className="drawer-links" aria-label="Основная навигация">
+          {NAV_LINKS.map((link, index) => (
+            <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="drawer-link">
+              <span>0{index + 1}</span>
+              {link.label}
             </a>
           ))}
-          <a
-            href={CONTACTS.telegramHref}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => setOpen(false)}
-            className="drawer-link"
-          >
-            Написать в Telegram
+          <a href={CONTACTS.telegramHref} target="_blank" rel="noreferrer" className="drawer-contact">
+            Начать проект <ArrowUpRight size={20} />
           </a>
         </nav>
 
@@ -165,16 +187,13 @@ function Navbar() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Бегущая строка                                                     */
-/* ------------------------------------------------------------------ */
 function Marquee({ items, renderItem, className = '' }) {
   const loop = [...items, ...items, ...items, ...items]
   return (
     <div className={`marquee ${className}`}>
       <div className="marquee-track">
-        {loop.map((item, i) => (
-          <span className="marquee-item" key={i}>
+        {loop.map((item, index) => (
+          <span className="marquee-item" key={`${index}-${typeof item === 'string' ? item : item.name}`}>
             {renderItem(item)}
           </span>
         ))}
@@ -183,90 +202,91 @@ function Marquee({ items, renderItem, className = '' }) {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Hero                                                               */
-/* ------------------------------------------------------------------ */
+function LineField({ side }) {
+  return (
+    <div className={`line-field line-field-${side}`} aria-hidden="true">
+      {Array.from({ length: 20 }, (_, index) => (
+        <span
+          className="curve-line"
+          key={index}
+          style={{ '--line-index': index, '--line-width': `${60 + index * 10}px` }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function TopLines() {
+  return (
+    <div className="top-lines" aria-hidden="true">
+      {Array.from({ length: 20 }, (_, index) => (
+        <span className="top-line" key={index} style={{ '--line-index': index }} />
+      ))}
+    </div>
+  )
+}
+
 function Hero() {
   return (
     <section className="hero" id="top">
-      <div className="hero-orbs" aria-hidden="true">
-        <span className="hero-orb orb-1" />
-        <span className="hero-orb orb-2" />
-        <span className="hero-orb orb-3" />
-      </div>
-      <div className="hero-grain" aria-hidden="true" />
+      <LineField side="left" />
+      <LineField side="right" />
+      <TopLines />
 
       <div className="hero-content">
         <Marquee
           items={SERVICES_TICKER}
           className="hero-ticker"
-          renderItem={(t) => <span className="ticker-chip">{t}</span>}
+          renderItem={(item) => <span className="ticker-chip">{item}</span>}
         />
 
-        <span className="hero-eyebrow">Мебельная студия · {CONTACTS.city}</span>
+        <p className="hero-kicker">Мебельная студия полного цикла · {CONTACTS.city}</p>
 
         <h1 className="hero-title">
-          <span className="hero-title-1">Эксклюзивная мебель</span>
-          <span className="hero-title-2 serif italic">на&nbsp;заказ</span>
+          Мебель, созданная <span className="serif italic">для&nbsp;вас.</span>
         </h1>
 
         <p className="hero-subtitle">
-          Мебельная студия полного цикла из&nbsp;{CONTACTS.city}. Проектируем и&nbsp;производим
-          кухни, корпусную и&nbsp;дизайнерскую мебель, торговое оборудование —
-          для&nbsp;дома и&nbsp;бизнеса.
+          Проектируем и производим индивидуальную мебель для частных и коммерческих интерьеров —
+          от первой линии на эскизе до безупречного монтажа.
         </p>
 
         <div className="hero-cta">
-          <a
-            className="btn-primary"
-            href={CONTACTS.telegramHref}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Обсудить проект
-            <ArrowUpRight size={18} strokeWidth={2.2} />
+          <a className="btn-primary" href="#works">
+            Смотреть проекты
+            <ArrowDownRight size={18} strokeWidth={2.2} />
           </a>
 
           <a className="btn-book" href="#callback">
-            <span className="btn-book-avatar">
-              <Phone size={18} strokeWidth={2} />
-            </span>
+            <span className="btn-book-avatar"><Phone size={18} strokeWidth={1.9} /></span>
             <span className="btn-book-text">
-              <span className="btn-book-primary">Заказать звонок</span>
-              <span className="btn-book-secondary">
-                <span className="dot" />
-                перезвоним за 15 минут
-              </span>
+              <span className="btn-book-primary">Обсудить проект</span>
+              <span className="btn-book-secondary"><span className="dot" /> Перезвоним за 15 минут</span>
             </span>
           </a>
         </div>
       </div>
 
       <div className="hero-blur" aria-hidden="true" />
+      <a className="hero-scroll" href="#clients" aria-label="Прокрутить к следующему разделу">
+        <span>листайте</span>
+        <ArrowDownRight size={16} />
+      </a>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Клиенты                                                            */
-/* ------------------------------------------------------------------ */
 function Clients() {
   return (
-    <section className="clients">
+    <section className="clients" id="clients">
       <div className="clients-inner">
-        <p className="clients-label">Нам доверяют дом и&nbsp;бизнес по&nbsp;всей России</p>
+        <p className="clients-label">Опыт в проектах для частных интерьеров, ритейла и HoReCa</p>
         <Marquee
           items={CLIENTS}
           className="clients-marquee"
-          renderItem={(c) => (
-            <span className="client-logo">
-              <span className="client-mark">{c.mark}</span>
-              <span
-                className="client-name"
-                style={{ fontFamily: c.font, fontWeight: c.weight }}
-              >
-                {c.name}
-              </span>
+          renderItem={(client) => (
+            <span className="client-logo" style={{ fontFamily: client.font, fontWeight: client.weight }}>
+              {client.name}
             </span>
           )}
         />
@@ -275,141 +295,119 @@ function Clients() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Плитка проекта с заглушкой при отсутствии фото                     */
-/* ------------------------------------------------------------------ */
-function ProjectTile({ project }) {
+function ProjectTile({ project, index }) {
   const [error, setError] = useState(false)
   return (
-    <article className={`tile ${error ? 'tile-empty' : ''}`}>
+    <article className={`tile tile-${(index % 4) + 1}`}>
       <div className="tile-media">
-        {!error && (
-          <img
-            src={asset(project.image)}
-            alt={project.title}
-            loading="lazy"
-            onError={() => setError(true)}
-          />
-        )}
-        {error && (
+        {!error ? (
+          <img src={asset(project.image)} alt={project.title} loading="lazy" onError={() => setError(true)} />
+        ) : (
           <div className="tile-placeholder">
-            <span className="tile-placeholder-mark">KFS</span>
-            <span className="tile-placeholder-hint">фото проекта</span>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <p>{project.title}</p>
           </div>
         )}
-        <span className="tile-plus">
-          <Plus size={18} strokeWidth={2} />
-        </span>
+        <span className="tile-index">{String(index + 1).padStart(2, '0')}</span>
+        <span className="tile-arrow"><ArrowUpRight size={18} strokeWidth={1.8} /></span>
       </div>
       <div className="tile-caption">
-        <span className="tile-title">{project.title}</span>
-        <span className="tile-location">
-          <MapPin size={13} strokeWidth={2} />
-          {project.location}
-        </span>
+        <h3>{project.title}</h3>
+        <span><MapPin size={13} strokeWidth={1.8} /> {project.location}</span>
       </div>
     </article>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Портфолио                                                          */
-/* ------------------------------------------------------------------ */
 function Portfolio() {
   const [active, setActive] = useState('all')
-  const filtered =
-    active === 'all' ? projects : projects.filter((p) => p.category === active)
+  const filtered = active === 'all' ? projects : projects.filter((project) => project.category === active)
 
   return (
     <section className="section works" id="works">
-      <div className="section-head">
-        <span className="eyebrow">Портфолио</span>
-        <h2 className="section-title">
-          Работы, которыми <span className="serif italic">гордимся</span>
-        </h2>
+      <div className="section-head editorial-head">
+        <div>
+          <span className="eyebrow">Избранные проекты</span>
+          <h2 className="section-title">Пространства с&nbsp;<span className="serif italic">характером.</span></h2>
+        </div>
         <p className="section-lead">
-          Более сотни реализованных интерьеров: частные квартиры и&nbsp;дома, кухни,
-          магазины, салоны и&nbsp;коммерческие пространства.
+          Частные и коммерческие интерьеры, где мебель становится частью архитектуры, а не просто заполняет пространство.
         </p>
       </div>
 
-      <div className="filters">
-        {categories.map((c) => (
+      <div className="filters" aria-label="Фильтр проектов">
+        {categories.map((category) => (
           <button
-            key={c.key}
-            className={`filter ${active === c.key ? 'is-active' : ''}`}
-            onClick={() => setActive(c.key)}
+            key={category.key}
+            className={`filter ${active === category.key ? 'is-active' : ''}`}
+            type="button"
+            onClick={() => setActive(category.key)}
           >
-            {c.label}
+            {category.label}
           </button>
         ))}
       </div>
 
       <div className="tiles">
-        {filtered.map((p) => (
-          <ProjectTile key={p.title} project={p} />
-        ))}
+        {filtered.map((project, index) => <ProjectTile key={project.title} project={project} index={index} />)}
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Направления                                                        */
-/* ------------------------------------------------------------------ */
-const SERVICES = [
-  {
-    n: '01',
-    title: 'Кухни',
-    text: 'Кухни на заказ любой сложности — от лаконичных до дизайнерских проектов с точной посадкой по месту.',
-  },
-  {
-    n: '02',
-    title: 'Мебель для дома',
-    text: 'Гардеробные, шкафы, гостиные, спальни и детские — корпусная мебель под ваш интерьер и размеры.',
-  },
-  {
-    n: '03',
-    title: 'Индивидуальные решения',
-    text: 'Авторские проекты по эскизам дизайнера: нестандартные формы, материалы и инженерные решения.',
-  },
-  {
-    n: '04',
-    title: 'Мебель для офиса',
-    text: 'Рабочие места, кабинеты руководителей, зоны ресепшн и переговорные — мебель для комфортной работы.',
-  },
-  {
-    n: '05',
-    title: 'Стекло и зеркала',
-    text: 'Стеклянные витрины, перегородки, фасады и зеркала — собственная обработка стекла.',
-  },
-  {
-    n: '06',
-    title: 'Корпоративным клиентам',
-    text: 'Торговое оборудование и мебель для сетей: магазины, салоны, шоурумы, HoReCa под единый стандарт.',
-  },
-]
-
 function Services() {
   return (
-    <section className="section services" id="services">
-      <div className="section-head">
-        <span className="eyebrow">Направления</span>
-        <h2 className="section-title">
-          Что мы <span className="serif italic">делаем</span>
-        </h2>
-        <p className="section-lead">
-          Полный цикл под одной крышей: проектирование, собственное производство,
-          доставка и монтаж.
-        </p>
+    <section className="services" id="services">
+      <div className="services-inner">
+        <div className="services-intro">
+          <span className="eyebrow light">Возможности</span>
+          <h2 className="section-title light-title">От идеи до&nbsp;<span className="serif italic">последней детали.</span></h2>
+          <p>Единая команда отвечает за проект, производство и монтаж — поэтому результат остаётся цельным.</p>
+        </div>
+
+        <div className="service-list">
+          {SERVICES.map((service) => (
+            <article className="service-row" key={service.n}>
+              <span className="service-n">{service.n}</span>
+              <h3>{service.title}</h3>
+              <p>{service.text}</p>
+              <ArrowUpRight className="service-arrow" size={21} strokeWidth={1.6} />
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function About() {
+  return (
+    <section className="section about" id="about">
+      <div className="about-visual">
+        <img src={asset('images/portfolio/house-kayani.jpg')} alt="Интерьер, реализованный Khmelevsky Furniture Studio" loading="lazy" />
+        <span className="about-stamp">KFS · с 2015</span>
       </div>
 
-      <div className="service-grid">
-        {SERVICES.map((s) => (
-          <article className="service-card" key={s.n}>
-            <span className="service-n">{s.n}</span>
-            <h3 className="service-title">{s.title}</h3>
-            <p className="service-text">{s.text}</p>
+      <div className="about-copy">
+        <span className="eyebrow">О студии</span>
+        <h2 className="section-title">Красота начинается с&nbsp;<span className="serif italic">точности.</span></h2>
+        <p className="about-lead">
+          Khmelevsky Furniture Studio — производство, проектная команда и монтаж в одном процессе.
+          Мы создаём мебель, которая точно отвечает архитектуре пространства и ритму жизни владельца.
+        </p>
+        <p className="about-text">
+          Работаем без посредников, соединяем современные технологии с ручным вниманием к материалу
+          и не выпускаем из поля зрения ни один этап — от замера до финальной регулировки фасада.
+        </p>
+        <a className="text-link" href="#contacts">Познакомиться со студией <ArrowUpRight size={18} /></a>
+      </div>
+
+      <div className="process-grid">
+        {PROCESS.map(([number, title, text]) => (
+          <article className="process-step" key={number}>
+            <span>{number}</span>
+            <h3>{title}</h3>
+            <p>{text}</p>
           </article>
         ))}
       </div>
@@ -417,99 +415,33 @@ function Services() {
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  О студии                                                           */
-/* ------------------------------------------------------------------ */
-const FEATURES = [
-  { icon: Layers, title: 'Полный цикл', text: 'От замера и 3D-проекта до монтажа — работаем без посредников.' },
-  { icon: Hammer, title: 'Собственное производство', text: 'Контролируем качество на каждом этапе изготовления.' },
-  { icon: Gem, title: 'Индивидуальный проект', text: 'Каждое изделие проектируется под ваше пространство.' },
-  { icon: ShieldCheck, title: 'Современные технологии', text: 'Передовое оборудование и проверенные материалы.' },
-]
-
-function About() {
-  return (
-    <section className="section about" id="about">
-      <div className="about-grid">
-        <div className="about-copy">
-          <span className="eyebrow">О студии</span>
-          <h2 className="section-title">
-            Создаём интерьеры, <span className="serif italic">достойные искусства</span>
-          </h2>
-          <p className="about-text">
-            Khmelevsky Furniture Studio — мебельная студия полного цикла из&nbsp;{CONTACTS.city}.
-            Мы&nbsp;создаём эксклюзивные интерьеры и&nbsp;применяем современные передовые
-            технологии в&nbsp;мебельном производстве.
-          </p>
-          <p className="about-text">
-            От&nbsp;частной кухни до&nbsp;оснащения торговых сетей — мы&nbsp;берём проект
-            целиком: проектируем, производим на&nbsp;собственных мощностях, доставляем
-            и&nbsp;устанавливаем. Результат — мебель, которая служит долго и&nbsp;выглядит
-            безупречно.
-          </p>
-          <a className="link-arrow" href="#contacts">
-            Обсудить ваш проект
-            <ArrowUpRight size={18} strokeWidth={2.2} />
-          </a>
-        </div>
-
-        <div className="about-panel">
-          <span className="about-panel-label">Принципы студии</span>
-          <ul className="principles">
-            {FEATURES.map((f) => {
-              const Icon = f.icon
-              return (
-                <li className="principle" key={f.title}>
-                  <span className="principle-icon">
-                    <Icon size={20} strokeWidth={1.6} />
-                  </span>
-                  <div className="principle-body">
-                    <h3 className="principle-title">{f.title}</h3>
-                    <p className="principle-text">{f.text}</p>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-/*  Форма обратной связи                                               */
-/* ------------------------------------------------------------------ */
 function CallbackForm() {
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [comment, setComment] = useState('')
-  const [status, setStatus] = useState('idle') // idle | sending | ok | error
+  const [status, setStatus] = useState('idle')
 
-  const submit = async (e) => {
-    e.preventDefault()
+  const submit = async (event) => {
+    event.preventDefault()
     if (!phone.trim()) return
     setStatus('sending')
 
     if (FORM_ENDPOINT) {
       try {
-        const res = await fetch(FORM_ENDPOINT, {
+        const response = await fetch(FORM_ENDPOINT, {
           method: 'POST',
           headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
           body: JSON.stringify({ Имя: name, Телефон: phone, Комментарий: comment }),
         })
-        setStatus(res.ok ? 'ok' : 'error')
+        setStatus(response.ok ? 'ok' : 'error')
       } catch {
         setStatus('error')
       }
       return
     }
 
-    // Без внешнего сервиса — формируем письмо в почтовом клиенте.
     const subject = encodeURIComponent('Заявка на обратный звонок с сайта')
-    const body = encodeURIComponent(
-      `Имя: ${name || '—'}\nТелефон: ${phone}\nКомментарий: ${comment || '—'}`,
-    )
+    const body = encodeURIComponent(`Имя: ${name || '—'}\nТелефон: ${phone}\nКомментарий: ${comment || '—'}`)
     window.location.href = `${CONTACTS.emailHref}?subject=${subject}&body=${body}`
     setStatus('ok')
   }
@@ -517,14 +449,12 @@ function CallbackForm() {
   if (status === 'ok') {
     return (
       <div className="form-done">
-        <span className="form-done-icon">
-          <Check size={24} strokeWidth={2.4} />
-        </span>
-        <h3>Спасибо! Заявка принята</h3>
-        <p>Мы свяжемся с вами в ближайшее время. Если удобнее — напишите нам в Telegram.</p>
-        <a className="btn-primary btn-inverse" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-          Написать в Telegram
-          <ArrowUpRight size={18} strokeWidth={2.2} />
+        <span className="form-done-icon"><Check size={22} strokeWidth={2.2} /></span>
+        <p className="form-kicker">Заявка отправлена</p>
+        <h3>Спасибо, скоро свяжемся.</h3>
+        <p>Если удобнее продолжить сейчас — напишите нам в Telegram.</p>
+        <a className="btn-primary btn-light" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
+          Открыть Telegram <ArrowUpRight size={18} />
         </a>
       </div>
     )
@@ -532,163 +462,83 @@ function CallbackForm() {
 
   return (
     <form className="callback" onSubmit={submit}>
-      <h3 className="callback-title">Заказать обратный звонок</h3>
-      <p className="callback-lead">Оставьте контакты — перезвоним и обсудим ваш проект.</p>
+      <p className="form-kicker">Оставить заявку</p>
+      <h3>Давайте обсудим ваш проект.</h3>
 
       <label className="field">
-        <span className="field-label">Ваше имя</span>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Как к вам обращаться"
-        />
+        <span>Ваше имя</span>
+        <input type="text" value={name} onChange={(event) => setName(event.target.value)} placeholder="Как к вам обращаться" />
       </label>
-
       <label className="field">
-        <span className="field-label">
-          Телефон <span className="req">*</span>
-        </span>
-        <input
-          type="tel"
-          required
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="+7 (___) ___-__-__"
-        />
+        <span>Телефон *</span>
+        <input type="tel" required value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+7 (___) ___-__-__" />
       </label>
-
       <label className="field">
-        <span className="field-label">Комментарий</span>
-        <textarea
-          rows={3}
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Коротко о задаче (необязательно)"
-        />
+        <span>Коротко о задаче</span>
+        <textarea rows={2} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Кухня, гардеробная, коммерческий проект…" />
       </label>
 
-      <button className="btn-primary btn-inverse form-submit" type="submit" disabled={status === 'sending'}>
+      <button className="form-submit" type="submit" disabled={status === 'sending'}>
         {status === 'sending' ? 'Отправляем…' : 'Отправить заявку'}
-        <ArrowUpRight size={18} strokeWidth={2.2} />
+        <ArrowUpRight size={18} />
       </button>
-
-      {status === 'error' && (
-        <p className="form-error">
-          Не удалось отправить. Позвоните нам: {CONTACTS.phoneLabel}
-        </p>
-      )}
-      <p className="form-note">
-        Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
-      </p>
+      {status === 'error' && <p className="form-error">Не удалось отправить. Позвоните нам: {CONTACTS.phoneLabel}</p>}
+      <p className="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
     </form>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Контакты                                                           */
-/* ------------------------------------------------------------------ */
 function Contact() {
   return (
-    <section className="section contacts" id="contacts">
+    <section className="contacts" id="contacts">
       <div className="contacts-inner">
-        <div className="contacts-grid">
-          <div className="contacts-left">
-            <span className="eyebrow light">Контакты</span>
-            <h2 className="contacts-title">
-              Расскажите о&nbsp;вашем <span className="serif italic">проекте</span>
-            </h2>
-            <p className="contacts-lead">
-              Напишите в&nbsp;Telegram, позвоните или оставьте заявку — обсудим идею,
-              сроки и&nbsp;стоимость.
-            </p>
+        <div className="contacts-copy">
+          <span className="eyebrow light">Контакты</span>
+          <h2>Начнём с&nbsp;<span className="serif italic">разговора.</span></h2>
+          <p>Расскажите об идее, пространстве и желаемых сроках — мы предложим следующий шаг.</p>
 
-            <div className="contacts-cards">
-              <a className="contact-card" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-                <Send size={22} strokeWidth={1.8} />
-                <span className="contact-card-label">Telegram</span>
-                <span className="contact-card-value">{CONTACTS.telegramLabel}</span>
-              </a>
-
-              <a className="contact-card" href={CONTACTS.phoneHref}>
-                <Phone size={22} strokeWidth={1.8} />
-                <span className="contact-card-label">Телефон</span>
-                <span className="contact-card-value">{CONTACTS.phoneLabel}</span>
-              </a>
-
-              <a className="contact-card" href={CONTACTS.emailHref}>
-                <Mail size={22} strokeWidth={1.8} />
-                <span className="contact-card-label">Почта</span>
-                <span className="contact-card-value">{CONTACTS.email}</span>
-              </a>
-
-              <div className="contact-card static">
-                <MapPin size={22} strokeWidth={1.8} />
-                <span className="contact-card-label">Город</span>
-                <span className="contact-card-value">{CONTACTS.city}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="contacts-right" id="callback">
-            <CallbackForm />
+          <div className="contact-links">
+            <a href={CONTACTS.telegramHref} target="_blank" rel="noreferrer"><Send size={18} /> Telegram <span>{CONTACTS.telegramLabel}</span></a>
+            <a href={CONTACTS.phoneHref}><Phone size={18} /> Телефон <span>{CONTACTS.phoneLabel}</span></a>
+            <a href={CONTACTS.emailHref}><Mail size={18} /> Почта <span>{CONTACTS.email}</span></a>
+            <div><MapPin size={18} /> Город <span>{CONTACTS.city}</span></div>
           </div>
         </div>
+
+        <div id="callback"><CallbackForm /></div>
       </div>
     </section>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Footer                                                             */
-/* ------------------------------------------------------------------ */
 function Footer() {
   return (
     <footer className="footer">
-      <div className="footer-inner">
-        <div className="footer-brand">
-          <img src={asset('logo-dark.png')} alt="Khmelevsky Furniture Studio" />
-          <p>Мебель на заказ. {CONTACTS.city}.</p>
-        </div>
-
-        <nav className="footer-nav">
-          {NAV_LINKS.map((l) => (
-            <a key={l.href} href={l.href}>
-              {l.label}
-            </a>
-          ))}
-        </nav>
-
-        <div className="footer-contacts">
-          <a href={CONTACTS.phoneHref}>{CONTACTS.phoneLabel}</a>
-          <a href={CONTACTS.emailHref}>{CONTACTS.email}</a>
-          <a href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-            {CONTACTS.telegramLabel}
-          </a>
-        </div>
+      <div className="footer-main">
+        <Wordmark />
+        <p>Индивидуальная мебель и интерьеры полного цикла. {CONTACTS.city}.</p>
+        <a className="footer-top" href="#top">Наверх <ChevronUp size={16} /></a>
       </div>
 
-      <div className="footer-legal">
-        <span className="footer-legal-title">{LEGAL.entity}</span>
-        <div className="footer-legal-grid">
+      <div className="footer-meta">
+        <nav>{NAV_LINKS.map((link) => <a key={link.href} href={link.href}>{link.label}</a>)}</nav>
+        <div className="footer-legal">
+          <strong>{LEGAL.entity}</strong>
           <span>ОГРН: {LEGAL.ogrn}</span>
-          <span>ИНН: {LEGAL.inn}</span>
-          <span>КПП: {LEGAL.kpp}</span>
+          <span>ИНН: {LEGAL.inn} · КПП: {LEGAL.kpp}</span>
           <span>Генеральный директор: {LEGAL.director}</span>
-          <span className="footer-legal-addr">Юридический адрес: {LEGAL.address}</span>
+          <span>{LEGAL.address}</span>
         </div>
       </div>
 
       <div className="footer-bottom">
-        © {new Date().getFullYear()} Khmelevsky Furniture Studio. Все права защищены.
+        <span>© {new Date().getFullYear()} Khmelevsky Furniture Studio</span>
+        <span>Все права защищены</span>
       </div>
     </footer>
   )
 }
 
-/* ------------------------------------------------------------------ */
-/*  Приложение                                                         */
-/* ------------------------------------------------------------------ */
 export default function App() {
   return (
     <div className="page">
