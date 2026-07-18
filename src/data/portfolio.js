@@ -71,6 +71,17 @@ export const projects = [
     image: '/images/portfolio/apt-siversa.jpg',
   },
   {
+    title: 'Ювелирный магазин Mary Jewelry',
+    category: 'retail',
+    location: 'Ростов-на-Дону',
+    images: [
+      '/images/portfolio/shop-mary-jewelry-main.webp',
+      '/images/portfolio/shop-mary-jewelry-showroom.webp',
+      '/images/portfolio/shop-mary-jewelry-art-wall.webp',
+      '/images/portfolio/shop-mary-jewelry-lounge.webp',
+    ],
+  },
+  {
     title: 'Магазин Giorgio',
     category: 'retail',
     location: 'Ростов-на-Дону',
