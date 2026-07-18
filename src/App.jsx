@@ -320,13 +320,115 @@ function Clients() {
   )
 }
 
-function ProjectTile({ project, index }) {
+function ZoomableImage({ className = '', onOpen, ...props }) {
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onOpen()
+    }
+  }
+
+  return (
+    <img
+      {...props}
+      className={`${className} zoomable-image`.trim()}
+      role="button"
+      tabIndex={0}
+      onClick={onOpen}
+      onKeyDown={handleKeyDown}
+    />
+  )
+}
+
+function ImageLightbox({ gallery, onClose }) {
+  const [activeImage, setActiveImage] = useState(gallery.index ?? 0)
+  const closeButton = useRef(null)
+  const touchStartX = useRef(null)
+  const images = gallery.images
+  const isGallery = images.length > 1
+
+  const showImage = (nextIndex) => {
+    setActiveImage((nextIndex + images.length) % images.length)
+  }
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeButton.current?.focus()
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose()
+      if (event.key === 'ArrowLeft' && isGallery) {
+        setActiveImage((current) => (current - 1 + images.length) % images.length)
+      }
+      if (event.key === 'ArrowRight' && isGallery) {
+        setActiveImage((current) => (current + 1) % images.length)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [images.length, isGallery, onClose])
+
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.changedTouches[0]?.clientX ?? null
+  }
+
+  const handleTouchEnd = (event) => {
+    if (!isGallery || touchStartX.current === null) return
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current
+    const distance = endX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(distance) < 48) return
+    distance > 0 ? showImage(activeImage - 1) : showImage(activeImage + 1)
+  }
+
+  return (
+    <div
+      className="image-lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Полноэкранный просмотр: ${gallery.label}`}
+      onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+    >
+      <button ref={closeButton} className="lightbox-close" type="button" onClick={onClose} aria-label="Закрыть изображение">
+        <X size={24} strokeWidth={1.7} />
+      </button>
+
+      {isGallery && (
+        <button className="lightbox-control lightbox-control-prev" type="button" onClick={() => showImage(activeImage - 1)} aria-label="Предыдущее изображение">
+          <ChevronLeft size={30} strokeWidth={1.6} />
+        </button>
+      )}
+
+      <figure className="lightbox-figure" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+        <img src={asset(images[activeImage])} alt={`${gallery.label}${isGallery ? ` — фотография ${activeImage + 1} из ${images.length}` : ''}`} />
+        <figcaption>
+          <span>{gallery.label}</span>
+          {isGallery && <span>{activeImage + 1} / {images.length}</span>}
+        </figcaption>
+      </figure>
+
+      {isGallery && (
+        <button className="lightbox-control lightbox-control-next" type="button" onClick={() => showImage(activeImage + 1)} aria-label="Следующее изображение">
+          <ChevronRight size={30} strokeWidth={1.6} />
+        </button>
+      )}
+    </div>
+  )
+}
+
+function ProjectTile({ project, index, onOpenImage }) {
   const images = project.images?.length ? project.images : [project.image]
   const isCarousel = images.length > 1
   const projectLabel = `${project.title}, ${project.location}`
   const [activeImage, setActiveImage] = useState(0)
   const [error, setError] = useState(false)
   const touchStartX = useRef(null)
+  const suppressOpenUntil = useRef(0)
 
   const showImage = (nextIndex) => {
     setError(false)
@@ -358,7 +460,13 @@ function ProjectTile({ project, index }) {
     const distance = endX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(distance) < 42) return
+    suppressOpenUntil.current = Date.now() + 450
     distance > 0 ? showPrevious() : showNext()
+  }
+
+  const openActiveImage = () => {
+    if (Date.now() < suppressOpenUntil.current) return
+    onOpenImage({ images, index: activeImage, label: projectLabel })
   }
 
   return (
@@ -374,13 +482,14 @@ function ProjectTile({ project, index }) {
         onTouchEnd={isCarousel ? handleTouchEnd : undefined}
       >
         {!error ? (
-          <img
+          <ZoomableImage
             key={images[activeImage]}
             className={isCarousel ? 'carousel-image' : undefined}
             src={asset(images[activeImage])}
             alt={isCarousel ? `${projectLabel} — фотография ${activeImage + 1} из ${images.length}` : projectLabel}
             loading="lazy"
             onError={() => setError(true)}
+            onOpen={openActiveImage}
           />
         ) : (
           <div className="tile-placeholder">
@@ -435,7 +544,7 @@ function ProjectTile({ project, index }) {
   )
 }
 
-function Portfolio() {
+function Portfolio({ onOpenImage }) {
   const [active, setActive] = useState('all')
   const filtered = active === 'all' ? projects : projects.filter((project) => project.category === active)
 
@@ -466,14 +575,14 @@ function Portfolio() {
 
       <div className="tiles">
         {filtered.map((project, index) => (
-          <ProjectTile key={project.images?.[0] ?? project.image} project={project} index={index} />
+          <ProjectTile key={project.images?.[0] ?? project.image} project={project} index={index} onOpenImage={onOpenImage} />
         ))}
       </div>
     </section>
   )
 }
 
-function Services() {
+function Services({ onOpenImage }) {
   const [activeService, setActiveService] = useState(0)
   const selected = SERVICES[activeService]
 
@@ -489,7 +598,12 @@ function Services() {
 
         <div className="services-stage">
           <div className="service-visual">
-            <img key={selected.n} src={asset(selected.image)} alt="" />
+            <ZoomableImage
+              key={selected.n}
+              src={asset(selected.image)}
+              alt={selected.title}
+              onOpen={() => onOpenImage({ images: [selected.image], index: 0, label: selected.title })}
+            />
             <div className="service-visual-shade" />
             <span className="service-visual-number">{selected.n}</span>
             <div className="service-visual-caption" key={`${selected.n}-caption`}>
@@ -525,7 +639,7 @@ function Services() {
   )
 }
 
-function About() {
+function About({ onOpenImage }) {
   const [activeStep, setActiveStep] = useState(0)
   const [stepNumber, stepTitle, stepText] = PROCESS[activeStep]
 
@@ -538,10 +652,20 @@ function About() {
 
       <div className="about-collage">
         <div className="about-image-main">
-          <img src={asset('images/about/about-architecture-laundry.webp')} alt="Индивидуальная мебель в постирочной" loading="lazy" />
+          <ZoomableImage
+            src={asset('images/about/about-architecture-laundry.webp')}
+            alt="Индивидуальная мебель в постирочной"
+            loading="lazy"
+            onOpen={() => onOpenImage({ images: ['images/about/about-architecture-laundry.webp'], index: 0, label: 'Индивидуальная мебель в постирочной' })}
+          />
         </div>
         <div className="about-image-float">
-          <img src={asset('images/about/about-architecture-hallway.webp')} alt="Встроенная мебель в интерьере прихожей" loading="lazy" />
+          <ZoomableImage
+            src={asset('images/about/about-architecture-hallway.webp')}
+            alt="Встроенная мебель в интерьере прихожей"
+            loading="lazy"
+            onOpen={() => onOpenImage({ images: ['images/about/about-architecture-hallway.webp'], index: 0, label: 'Встроенная мебель в интерьере прихожей' })}
+          />
         </div>
         <span className="about-stamp"><b>2003</b><small>год основания</small></span>
         <span className="about-orbit" aria-hidden="true"><i>форма</i><i>материал</i><i>ритм</i></span>
@@ -713,18 +837,21 @@ function Footer() {
 }
 
 export default function App() {
+  const [lightbox, setLightbox] = useState(null)
+
   return (
     <div className="page">
       <Navbar />
       <main>
         <Hero />
         <Clients />
-        <Portfolio />
-        <Services />
-        <About />
+        <Portfolio onOpenImage={setLightbox} />
+        <Services onOpenImage={setLightbox} />
+        <About onOpenImage={setLightbox} />
         <Contact />
       </main>
       <Footer />
+      {lightbox && <ImageLightbox gallery={lightbox} onClose={() => setLightbox(null)} />}
     </div>
   )
 }

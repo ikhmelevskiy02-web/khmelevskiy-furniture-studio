@@ -720,6 +720,15 @@ button {
   transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
 }
 
+.zoomable-image {
+  cursor: zoom-in;
+}
+
+.zoomable-image:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -4px;
+}
+
 .tile:hover .tile-media img {
   transform: scale(1.025);
   filter: saturate(1) contrast(1);
@@ -730,10 +739,146 @@ button {
 }
 
 .carousel-image {
-  pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
   animation: carousel-image-in 0.58s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  padding: max(22px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right)) max(18px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(12, 13, 12, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: lightbox-in 0.24s ease both;
+}
+
+.lightbox-figure {
+  width: min(1180px, calc(100vw - 150px));
+  height: calc(100dvh - 54px);
+  margin: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 12px;
+  touch-action: pan-y;
+}
+
+.lightbox-figure img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lightbox-figure figcaption {
+  min-height: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.lightbox-close,
+.lightbox-control {
+  position: absolute;
+  z-index: 2;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-close:focus-visible,
+.lightbox-control:hover,
+.lightbox-control:focus-visible {
+  background: rgba(255, 255, 255, 0.22);
+  outline: none;
+  transform: scale(1.06);
+}
+
+.lightbox-close {
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  width: 46px;
+  height: 46px;
+}
+
+.lightbox-control {
+  top: 50%;
+  width: 52px;
+  height: 52px;
+  transform: translateY(-50%);
+}
+
+.lightbox-control:hover,
+.lightbox-control:focus-visible {
+  transform: translateY(-50%) scale(1.06);
+}
+
+.lightbox-control-prev {
+  left: max(20px, env(safe-area-inset-left));
+}
+
+.lightbox-control-next {
+  right: max(20px, env(safe-area-inset-right));
+}
+
+@keyframes lightbox-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 680px) {
+  .image-lightbox {
+    padding: max(64px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  }
+
+  .lightbox-figure {
+    width: 100%;
+    height: calc(100dvh - 78px);
+  }
+
+  .lightbox-figure figcaption {
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .lightbox-control {
+    top: auto;
+    bottom: max(54px, calc(env(safe-area-inset-bottom) + 42px));
+    width: 44px;
+    height: 44px;
+    transform: none;
+  }
+
+  .lightbox-control:hover,
+  .lightbox-control:focus-visible {
+    transform: scale(1.06);
+  }
+
+  .lightbox-control-prev {
+    left: max(16px, env(safe-area-inset-left));
+  }
+
+  .lightbox-control-next {
+    right: max(16px, env(safe-area-inset-right));
+  }
 }
 
 .carousel-control {
@@ -1227,6 +1372,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: 1;
+  pointer-events: none;
   background:
     linear-gradient(180deg, rgba(19, 20, 17, 0.08), rgba(19, 20, 17, 0.7)),
     linear-gradient(90deg, rgba(166, 111, 80, 0.12), transparent 65%);
@@ -1241,6 +1387,7 @@ button {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.15em;
+  pointer-events: none;
 }
 
 .service-visual-caption {
@@ -1251,6 +1398,7 @@ button {
   max-width: 75%;
   color: #fff;
   animation: caption-rise 0.55s ease both;
+  pointer-events: none;
 }
 
 .service-visual-caption > span {
@@ -1283,6 +1431,7 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 44% 56% 62% 38%;
   animation: orbit-turn 14s linear infinite;
+  pointer-events: none;
 }
 
 .service-visual-orbit::before,
