@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ArrowDownRight,
   ArrowUpRight,
   Check,
+  ChevronLeft,
+  ChevronRight,
   ChevronUp,
   Mail,
   MapPin,
@@ -312,12 +314,66 @@ function Clients() {
 }
 
 function ProjectTile({ project, index }) {
+  const images = project.images?.length ? project.images : [project.image]
+  const isCarousel = images.length > 1
+  const [activeImage, setActiveImage] = useState(0)
   const [error, setError] = useState(false)
+  const touchStartX = useRef(null)
+
+  const showImage = (nextIndex) => {
+    setError(false)
+    setActiveImage((nextIndex + images.length) % images.length)
+  }
+
+  const showPrevious = () => showImage(activeImage - 1)
+  const showNext = () => showImage(activeImage + 1)
+
+  const handleKeyDown = (event) => {
+    if (!isCarousel) return
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      showPrevious()
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      showNext()
+    }
+  }
+
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.changedTouches[0]?.clientX ?? null
+  }
+
+  const handleTouchEnd = (event) => {
+    if (touchStartX.current === null) return
+    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current
+    const distance = endX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(distance) < 42) return
+    distance > 0 ? showPrevious() : showNext()
+  }
+
   return (
-    <article className={`tile tile-${(index % 4) + 1}`}>
-      <div className="tile-media">
+    <article className={`tile tile-${(index % 4) + 1}${isCarousel ? ' has-carousel' : ''}`}>
+      <div
+        className="tile-media"
+        role={isCarousel ? 'region' : undefined}
+        aria-roledescription={isCarousel ? 'карусель' : undefined}
+        aria-label={isCarousel ? `${project.title}, ${images.length} фотографии` : undefined}
+        tabIndex={isCarousel ? 0 : undefined}
+        onKeyDown={handleKeyDown}
+        onTouchStart={isCarousel ? handleTouchStart : undefined}
+        onTouchEnd={isCarousel ? handleTouchEnd : undefined}
+      >
         {!error ? (
-          <img src={asset(project.image)} alt={project.title} loading="lazy" onError={() => setError(true)} />
+          <img
+            key={images[activeImage]}
+            className={isCarousel ? 'carousel-image' : undefined}
+            src={asset(images[activeImage])}
+            alt={isCarousel ? `${project.title} — фотография ${activeImage + 1} из ${images.length}` : project.title}
+            loading="lazy"
+            onError={() => setError(true)}
+          />
         ) : (
           <div className="tile-placeholder">
             <span>{String(index + 1).padStart(2, '0')}</span>
@@ -325,7 +381,43 @@ function ProjectTile({ project, index }) {
           </div>
         )}
         <span className="tile-index">{String(index + 1).padStart(2, '0')}</span>
-        <span className="tile-arrow"><ArrowUpRight size={18} strokeWidth={1.8} /></span>
+        {isCarousel ? (
+          <>
+            <button
+              className="carousel-control carousel-control-prev"
+              type="button"
+              aria-label="Предыдущая фотография"
+              onClick={showPrevious}
+            >
+              <ChevronLeft size={20} strokeWidth={1.8} />
+            </button>
+            <button
+              className="carousel-control carousel-control-next"
+              type="button"
+              aria-label="Следующая фотография"
+              onClick={showNext}
+            >
+              <ChevronRight size={20} strokeWidth={1.8} />
+            </button>
+            <div className="carousel-dots" aria-label="Выбор фотографии">
+              {images.map((image, imageIndex) => (
+                <button
+                  className={`carousel-dot${activeImage === imageIndex ? ' is-active' : ''}`}
+                  key={image}
+                  type="button"
+                  aria-label={`Показать фотографию ${imageIndex + 1}`}
+                  aria-current={activeImage === imageIndex ? 'true' : undefined}
+                  onClick={() => showImage(imageIndex)}
+                />
+              ))}
+            </div>
+            <span className="sr-only" aria-live="polite">
+              Фотография {activeImage + 1} из {images.length}
+            </span>
+          </>
+        ) : (
+          <span className="tile-arrow"><ArrowUpRight size={18} strokeWidth={1.8} /></span>
+        )}
       </div>
       <div className="tile-caption">
         <h3>{project.title}</h3>
