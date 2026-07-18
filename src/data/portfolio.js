@@ -54,7 +54,12 @@ export const projects = [
     title: 'Квартира на Крепостном',
     category: 'home',
     location: 'Ростов-на-Дону',
-    image: '/images/portfolio/apt-krepostnoy.jpg',
+    images: [
+      '/images/portfolio/apt-krepostnoy-kitchen.webp',
+      '/images/portfolio/apt-krepostnoy-hallway.webp',
+      '/images/portfolio/apt-krepostnoy-entry.webp',
+      '/images/portfolio/apt-krepostnoy-bathroom.webp',
+    ],
   },
   {
     title: 'Дом «Щепкинский лес»',
