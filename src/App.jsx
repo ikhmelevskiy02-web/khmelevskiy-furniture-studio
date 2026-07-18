@@ -27,7 +27,12 @@ const CONTACTS = {
 }
 
 const FORM_ENDPOINT = ''
-const asset = (path) => `${import.meta.env.BASE_URL}${String(path).replace(/^\/+/, '')}`
+const ASSET_VERSION = '20260719-1'
+const asset = (path) => {
+  const normalizedPath = String(path).replace(/^\/+/, '')
+  const url = `${import.meta.env.BASE_URL}${normalizedPath}`
+  return /\.(?:avif|gif|jpe?g|png|svg|webp)$/i.test(normalizedPath) ? `${url}?v=${ASSET_VERSION}` : url
+}
 
 const NAV_LINKS = [
   { href: '#works', label: 'Проекты' },
