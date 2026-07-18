@@ -12,16 +12,28 @@
 export const categories = [
   { key: 'all', label: 'Все работы' },
   { key: 'kitchens', label: 'Кухни' },
-  { key: 'home', label: 'Дом и квартиры' },
+  { key: 'home', label: 'Частные дома и квартиры' },
   { key: 'retail', label: 'Магазины и торговое оборудование' },
   { key: 'commercial', label: 'Коммерческие пространства' },
 ]
 
 export const projects = [
   {
-    title: 'Дом «Царское село»',
+    title: 'Частный дом',
     category: 'home',
-    location: 'Царское село',
+    location: 'Ростов-на-Дону',
+    images: [
+      '/images/portfolio/private-house-rostov-living-room.webp',
+      '/images/portfolio/private-house-rostov-windows.webp',
+      '/images/portfolio/private-house-rostov-kitchen.webp',
+      '/images/portfolio/private-house-rostov-hallway.webp',
+      '/images/portfolio/private-house-rostov-study.webp',
+    ],
+  },
+  {
+    title: 'Частный дом',
+    category: 'home',
+    location: 'Санкт-Петербург, Царское Село',
     images: [
       '/images/portfolio/house-tsarskoye-selo-bedroom.webp',
       '/images/portfolio/house-tsarskoye-selo-study.webp',
@@ -29,9 +41,9 @@ export const projects = [
     ],
   },
   {
-    title: 'Кухня «Янтарный»',
+    title: 'Частный дом',
     category: 'kitchens',
-    location: 'Ростов-на-Дону',
+    location: 'Ростовская область',
     image: '/images/portfolio/kitchen-yantarny.jpg',
   },
   {
@@ -45,13 +57,13 @@ export const projects = [
     ],
   },
   {
-    title: 'Квартира «Алые Паруса»',
+    title: 'Квартира',
     category: 'home',
     location: 'Ростов-на-Дону',
     image: '/images/portfolio/apt-alye-parusa.jpg',
   },
   {
-    title: 'Квартира на Крепостном',
+    title: 'Квартира',
     category: 'home',
     location: 'Ростов-на-Дону',
     images: [
@@ -62,19 +74,19 @@ export const projects = [
     ],
   },
   {
-    title: 'Дом «Щепкинский лес»',
+    title: 'Частный дом',
     category: 'home',
     location: 'Ростовская область',
     image: '/images/portfolio/house-schepkino.jpg',
   },
   {
-    title: 'Дом «Каяни»',
+    title: 'Частный дом',
     category: 'home',
     location: 'Ростов-на-Дону',
     image: '/images/portfolio/house-kayani.jpg',
   },
   {
-    title: 'Квартира на Сиверса',
+    title: 'Квартира',
     category: 'home',
     location: 'Ростов-на-Дону',
     image: '/images/portfolio/apt-siversa.jpg',

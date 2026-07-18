@@ -316,6 +316,7 @@ function Clients() {
 function ProjectTile({ project, index }) {
   const images = project.images?.length ? project.images : [project.image]
   const isCarousel = images.length > 1
+  const projectLabel = `${project.title}, ${project.location}`
   const [activeImage, setActiveImage] = useState(0)
   const [error, setError] = useState(false)
   const touchStartX = useRef(null)
@@ -359,7 +360,7 @@ function ProjectTile({ project, index }) {
         className="tile-media"
         role={isCarousel ? 'region' : undefined}
         aria-roledescription={isCarousel ? 'карусель' : undefined}
-        aria-label={isCarousel ? `${project.title}, ${images.length} фотографии` : undefined}
+        aria-label={isCarousel ? `${projectLabel}, ${images.length} фотографии` : undefined}
         tabIndex={isCarousel ? 0 : undefined}
         onKeyDown={handleKeyDown}
         onTouchStart={isCarousel ? handleTouchStart : undefined}
@@ -370,7 +371,7 @@ function ProjectTile({ project, index }) {
             key={images[activeImage]}
             className={isCarousel ? 'carousel-image' : undefined}
             src={asset(images[activeImage])}
-            alt={isCarousel ? `${project.title} — фотография ${activeImage + 1} из ${images.length}` : project.title}
+            alt={isCarousel ? `${projectLabel} — фотография ${activeImage + 1} из ${images.length}` : projectLabel}
             loading="lazy"
             onError={() => setError(true)}
           />
@@ -457,7 +458,9 @@ function Portfolio() {
       </div>
 
       <div className="tiles">
-        {filtered.map((project, index) => <ProjectTile key={project.title} project={project} index={index} />)}
+        {filtered.map((project, index) => (
+          <ProjectTile key={project.images?.[0] ?? project.image} project={project} index={index} />
+        ))}
       </div>
     </section>
   )
