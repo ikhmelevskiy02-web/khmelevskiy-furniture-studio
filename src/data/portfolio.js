@@ -142,10 +142,14 @@ export const projects = [
     ],
   },
   {
-    title: 'Магазин Picart',
+    title: 'Магазин Picard',
     category: 'retail',
     location: 'Санкт-Петербург',
-    image: '/images/portfolio/shop-picart-spb.jpg',
+    images: [
+      '/images/portfolio/shop-picard-main.webp',
+      '/images/portfolio/shop-picard-display.webp',
+      '/images/portfolio/shop-picard-wall.webp',
+    ],
   },
   {
     title: 'Ювелирный магазин «Золотая подкова»',
