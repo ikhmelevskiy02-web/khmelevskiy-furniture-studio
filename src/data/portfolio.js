@@ -19,6 +19,18 @@ export const categories = [
 
 export const projects = [
   {
+    title: 'Квартира',
+    category: 'home',
+    location: 'Новороссийск',
+    images: [
+      '/images/portfolio/apt-novorossiysk-kitchen.webp',
+      '/images/portfolio/apt-novorossiysk-bedroom-pink.webp',
+      '/images/portfolio/apt-novorossiysk-dark-interior.webp',
+      '/images/portfolio/apt-novorossiysk-study.webp',
+      '/images/portfolio/apt-novorossiysk-bedroom-gray.webp',
+    ],
+  },
+  {
     title: 'Частный дом',
     category: 'home',
     location: 'Ростов-на-Дону',
