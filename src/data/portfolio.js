@@ -77,7 +77,12 @@ export const projects = [
     title: 'Частный дом',
     category: 'home',
     location: 'Ростовская область',
-    image: '/images/portfolio/house-schepkino.jpg',
+    images: [
+      '/images/portfolio/house-schepkino-kitchen-main.webp',
+      '/images/portfolio/house-schepkino-kitchen-detail.webp',
+      '/images/portfolio/house-schepkino-stairs-detail.webp',
+      '/images/portfolio/house-schepkino-stairs-main.webp',
+    ],
   },
   {
     title: 'Частный дом',
