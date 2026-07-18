@@ -123,7 +123,11 @@ export const projects = [
     title: 'Магазин Giorgio',
     category: 'retail',
     location: 'Ростов-на-Дону',
-    image: '/images/portfolio/shop-giorgio.jpg',
+    images: [
+      '/images/portfolio/shop-giorgio-main.webp',
+      '/images/portfolio/shop-giorgio-display.webp',
+      '/images/portfolio/shop-giorgio-counter.webp',
+    ],
   },
   {
     title: 'Магазин Picart',
