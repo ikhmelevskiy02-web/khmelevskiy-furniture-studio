@@ -1,6 +1,8 @@
 // Данные раздела «Работы».
 //
 // Каждый проект ссылается на изображение из /public/images/portfolio/.
+// Для проекта с несколькими кадрами используйте поле images — карточка
+// автоматически станет каруселью.
 // Пока файла фото нет — на сайте показывается аккуратная заглушка
 // с названием проекта. Как только вы положите файл с указанным именем
 // в папку public/images/portfolio/, фотография появится автоматически.
@@ -16,6 +18,16 @@ export const categories = [
 ]
 
 export const projects = [
+  {
+    title: 'Дом «Царское село»',
+    category: 'home',
+    location: 'Царское село',
+    images: [
+      '/images/portfolio/house-tsarskoye-selo-bedroom.webp',
+      '/images/portfolio/house-tsarskoye-selo-study.webp',
+      '/images/portfolio/house-tsarskoye-selo-bathroom.webp',
+    ],
+  },
   {
     title: 'Кухня «Янтарный»',
     category: 'kitchens',

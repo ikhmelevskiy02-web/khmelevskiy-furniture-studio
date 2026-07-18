@@ -73,6 +73,18 @@ button {
   min-width: 320px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .serif {
   font-family: var(--serif);
 }
@@ -711,6 +723,91 @@ button {
 .tile:hover .tile-media img {
   transform: scale(1.025);
   filter: saturate(1) contrast(1);
+}
+
+.has-carousel .tile-media {
+  touch-action: pan-y;
+}
+
+.carousel-image {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: carousel-image-in 0.58s cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  background: rgba(247, 244, 238, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(24, 26, 22, 0.13);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateY(-50%);
+  transition: color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+
+.carousel-control:hover,
+.carousel-control:focus-visible {
+  color: #fff;
+  background: rgba(24, 26, 22, 0.92);
+  outline: 0;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.carousel-control-prev {
+  left: 16px;
+}
+
+.carousel-control-next {
+  right: 16px;
+}
+
+.carousel-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 4;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(24, 26, 22, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transform: translateX(-50%);
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  flex: none;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  transition: width 0.28s ease, background 0.28s ease;
+}
+
+.carousel-dot:hover,
+.carousel-dot:focus-visible {
+  background: #fff;
+  outline: 0;
+}
+
+.carousel-dot.is-active {
+  width: 20px;
+  background: #fff;
 }
 
 .tile-index,
@@ -1874,6 +1971,11 @@ button {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes carousel-image-in {
+  from { opacity: 0.45; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @keyframes orbit-turn {
   to { transform: rotate(360deg); }
 }
@@ -2225,6 +2327,23 @@ button {
   .tile-2 .tile-media,
   .tile-3 .tile-media {
     aspect-ratio: 1.08 / 1;
+  }
+
+  .carousel-control {
+    width: 38px;
+    height: 38px;
+  }
+
+  .carousel-control-prev {
+    left: 10px;
+  }
+
+  .carousel-control-next {
+    right: 10px;
+  }
+
+  .carousel-dots {
+    bottom: 10px;
   }
 
   .services-inner {
