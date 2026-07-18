@@ -130,6 +130,16 @@ export const projects = [
     ],
   },
   {
+    title: 'Магазин Lavarice',
+    category: 'retail',
+    location: 'Санкт-Петербург',
+    images: [
+      '/images/portfolio/shop-lavarice-main.webp',
+      '/images/portfolio/shop-lavarice-display.webp',
+      '/images/portfolio/shop-lavarice-interior.webp',
+    ],
+  },
+  {
     title: 'Магазин Picart',
     category: 'retail',
     location: 'Санкт-Петербург',
