@@ -21,6 +21,20 @@ export const projects = [
   {
     title: 'Квартира',
     category: 'home',
+    location: 'Ростов-на-Дону',
+    images: [
+      '/images/portfolio/apt-rostov-modern-bedroom.webp',
+      '/images/portfolio/apt-rostov-modern-vanity.webp',
+      '/images/portfolio/apt-rostov-modern-wardrobe.webp',
+      '/images/portfolio/apt-rostov-modern-blue-bedroom.webp',
+      '/images/portfolio/apt-rostov-modern-dining.webp',
+      '/images/portfolio/apt-rostov-modern-hallway.webp',
+      '/images/portfolio/apt-rostov-modern-kitchen.webp',
+    ],
+  },
+  {
+    title: 'Квартира',
+    category: 'home',
     location: 'Новороссийск',
     images: [
       '/images/portfolio/apt-novorossiysk-kitchen.webp',
