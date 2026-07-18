@@ -94,10 +94,15 @@ export const projects = [
     image: '/images/portfolio/shop-picart-spb.jpg',
   },
   {
-    title: 'Ювелирный «Золотая Подкова»',
+    title: 'Ювелирный магазин «Золотая подкова»',
     category: 'retail',
-    location: 'Ростов-на-Дону',
-    image: '/images/portfolio/shop-zolotaya-podkova.jpg',
+    location: 'Москва',
+    images: [
+      '/images/portfolio/shop-zolotaya-podkova-moscow-main.webp',
+      '/images/portfolio/shop-zolotaya-podkova-moscow-aisle.webp',
+      '/images/portfolio/shop-zolotaya-podkova-moscow-display.webp',
+      '/images/portfolio/shop-zolotaya-podkova.jpg',
+    ],
   },
   {
     title: 'Салон красоты «AVENUE 23»',
