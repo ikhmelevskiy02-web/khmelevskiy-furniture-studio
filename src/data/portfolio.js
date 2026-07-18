@@ -114,6 +114,10 @@ export const projects = [
     title: 'Фуд-корт ТРЦ «Парк»',
     category: 'commercial',
     location: 'Ростов-на-Дону',
-    image: '/images/portfolio/foodcourt-park.jpg',
+    images: [
+      '/images/portfolio/foodcourt-park-main.webp',
+      '/images/portfolio/foodcourt-park-seating.webp',
+      '/images/portfolio/foodcourt-park-detail.webp',
+    ],
   },
 ]
