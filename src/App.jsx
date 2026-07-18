@@ -343,7 +343,7 @@ function ZoomableImage({ className = '', onOpen, ...props }) {
 function ImageLightbox({ gallery, onClose }) {
   const [activeImage, setActiveImage] = useState(gallery.index ?? 0)
   const closeButton = useRef(null)
-  const touchStartX = useRef(null)
+  const touchStart = useRef(null)
   const images = gallery.images
   const isGallery = images.length > 1
 
@@ -374,16 +374,30 @@ function ImageLightbox({ gallery, onClose }) {
   }, [images.length, isGallery, onClose])
 
   const handleTouchStart = (event) => {
-    touchStartX.current = event.changedTouches[0]?.clientX ?? null
+    const touch = event.changedTouches[0]
+    touchStart.current = touch ? { x: touch.clientX, y: touch.clientY } : null
   }
 
   const handleTouchEnd = (event) => {
-    if (!isGallery || touchStartX.current === null) return
-    const endX = event.changedTouches[0]?.clientX ?? touchStartX.current
-    const distance = endX - touchStartX.current
-    touchStartX.current = null
-    if (Math.abs(distance) < 48) return
-    distance > 0 ? showImage(activeImage - 1) : showImage(activeImage + 1)
+    if (touchStart.current === null) return
+    const touch = event.changedTouches[0]
+    const end = touch ? { x: touch.clientX, y: touch.clientY } : touchStart.current
+    const distanceX = end.x - touchStart.current.x
+    const distanceY = end.y - touchStart.current.y
+    touchStart.current = null
+
+    if (distanceY < -72 && Math.abs(distanceY) > Math.abs(distanceX) * 1.15) {
+      onClose()
+      return
+    }
+
+    if (!isGallery || Math.abs(distanceX) < 48 || Math.abs(distanceX) < Math.abs(distanceY)) return
+    distanceX > 0 ? showImage(activeImage - 1) : showImage(activeImage + 1)
+  }
+
+  const handleBackdropClick = (event) => {
+    if (event.target.closest('img, button')) return
+    onClose()
   }
 
   return (
@@ -392,7 +406,7 @@ function ImageLightbox({ gallery, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label={`Полноэкранный просмотр: ${gallery.label}`}
-      onMouseDown={(event) => event.target === event.currentTarget && onClose()}
+      onClick={handleBackdropClick}
     >
       <button ref={closeButton} className="lightbox-close" type="button" onClick={onClose} aria-label="Закрыть изображение">
         <X size={24} strokeWidth={1.7} />
@@ -405,7 +419,9 @@ function ImageLightbox({ gallery, onClose }) {
       )}
 
       <figure className="lightbox-figure" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        <img src={asset(images[activeImage])} alt={`${gallery.label}${isGallery ? ` — фотография ${activeImage + 1} из ${images.length}` : ''}`} />
+        <div className="lightbox-image-stage">
+          <img src={asset(images[activeImage])} alt={`${gallery.label}${isGallery ? ` — фотография ${activeImage + 1} из ${images.length}` : ''}`} />
+        </div>
         <figcaption>
           <span>{gallery.label}</span>
           {isGallery && <span>{activeImage + 1} / {images.length}</span>}
