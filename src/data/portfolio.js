@@ -147,10 +147,14 @@ export const projects = [
     ],
   },
   {
-    title: 'Салон красоты «AVENUE 23»',
+    title: 'Салон красоты «23-Авеню»',
     category: 'commercial',
     location: 'Ростов-на-Дону',
-    image: '/images/portfolio/salon-avenue23.jpg',
+    images: [
+      '/images/portfolio/salon-23-avenue-main.webp',
+      '/images/portfolio/salon-23-avenue-wide.webp',
+      '/images/portfolio/salon-23-avenue-manicure.webp',
+    ],
   },
   {
     title: 'Фуд-корт ТРЦ «Парк»',
