@@ -538,12 +538,12 @@ function About() {
 
       <div className="about-collage">
         <div className="about-image-main">
-          <img src={asset('images/portfolio/house-kayani.jpg')} alt="Интерьер, реализованный Khmelevsky Furniture Studio" loading="lazy" />
+          <img src={asset('images/about/about-architecture-laundry.webp')} alt="Индивидуальная мебель в постирочной" loading="lazy" />
         </div>
         <div className="about-image-float">
-          <img src={asset('images/portfolio/apt-siversa.jpg')} alt="Деталь авторского интерьера" loading="lazy" />
+          <img src={asset('images/about/about-architecture-hallway.webp')} alt="Встроенная мебель в интерьере прихожей" loading="lazy" />
         </div>
-        <span className="about-stamp"><b>2015</b><small>год основания</small></span>
+        <span className="about-stamp"><b>2003</b><small>год основания</small></span>
         <span className="about-orbit" aria-hidden="true"><i>форма</i><i>материал</i><i>ритм</i></span>
       </div>
 
@@ -552,7 +552,7 @@ function About() {
         <p className="about-text">Поэтому проектировщики, производство и монтажная команда работают как единая система. Мы не адаптируем готовые модули — начинаем с человека, его привычек и конкретного пространства.</p>
         <div className="about-facts">
           <span><b>10+</b><small>лет опыта</small></span>
-          <span><b>1</b><small>команда полного цикла</small></span>
+          <span><b>2500+</b><small>реализованных проектов</small></span>
           <span><b>∞</b><small>вариантов исполнения</small></span>
         </div>
         <a className="text-link" href="#contacts">Обсудить идею <ArrowUpRight size={18} /></a>
