@@ -77,12 +77,14 @@ export const projects = [
   {
     title: 'Квартира',
     category: 'home',
-    location: 'Ростов-на-Дону',
+    location: 'Аксай, Ростовская область',
     images: [
-      '/images/portfolio/apt-krepostnoy-kitchen.webp',
-      '/images/portfolio/apt-krepostnoy-hallway.webp',
-      '/images/portfolio/apt-krepostnoy-entry.webp',
-      '/images/portfolio/apt-krepostnoy-bathroom.webp',
+      '/images/portfolio/apt-aksay-study.webp',
+      '/images/portfolio/apt-aksay-console.webp',
+      '/images/portfolio/apt-aksay-wardrobe.webp',
+      '/images/portfolio/apt-aksay-hallway.webp',
+      '/images/portfolio/apt-aksay-hallway-detail.webp',
+      '/images/portfolio/apt-aksay-wardrobe-detail.webp',
     ],
   },
   {
