@@ -35,10 +35,14 @@ export const projects = [
     image: '/images/portfolio/kitchen-yantarny.jpg',
   },
   {
-    title: 'Кухня, посёлок Янтарный',
-    category: 'kitchens',
-    location: 'Ростовская область',
-    image: '/images/portfolio/kitchen-yantarny-village.jpg',
+    title: 'Магазин «Семикаракорская керамика»',
+    category: 'retail',
+    location: 'Москва, Арбат',
+    images: [
+      '/images/portfolio/shop-semikarakorskaya-ceramics-main.webp',
+      '/images/portfolio/shop-semikarakorskaya-ceramics-counter.webp',
+      '/images/portfolio/shop-semikarakorskaya-ceramics-display.webp',
+    ],
   },
   {
     title: 'Квартира «Алые Паруса»',
