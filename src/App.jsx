@@ -2,13 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Check,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  Factory,
   Mail,
   MapPin,
+  Minus,
   Phone,
+  Plus,
+  RotateCcw,
   Send,
   X,
 } from 'lucide-react'
@@ -26,7 +29,6 @@ const CONTACTS = {
   city: 'Ростов-на-Дону',
 }
 
-const FORM_ENDPOINT = ''
 const ASSET_VERSION = '20260719-1'
 const asset = (path) => {
   const normalizedPath = String(path).replace(/^\/+/, '')
@@ -37,6 +39,7 @@ const asset = (path) => {
 const NAV_LINKS = [
   { href: '#works', label: 'Проекты' },
   { href: '#services', label: 'Возможности' },
+  { href: '#production', label: 'Производство' },
   { href: '#about', label: 'Студия' },
   { href: '#contacts', label: 'Контакты' },
 ]
@@ -113,12 +116,9 @@ const SERVICES = [
   },
 ]
 
-const PROCESS = [
-  ['01', 'Знакомство', 'Обсуждаем пространство, сценарии жизни, эстетику и ориентиры по бюджету.'],
-  ['02', 'Проект', 'Делаем замер, продумываем конструкцию, материалы и визуальную подачу.'],
-  ['03', 'Производство', 'Изготавливаем на собственных мощностях и контролируем каждый узел.'],
-  ['04', 'Монтаж', 'Доставляем, собираем и сдаём готовый интерьер без разрыва между идеей и реализацией.'],
-]
+const PRODUCTION_ADDRESS = 'Ростовская область, Родионово-Несветайский район, Волошинское сельское поселение, село Генеральское, Советская улица, 4Б/2'
+const PRODUCTION_MAP_URL = `https://yandex.ru/map-widget/v1/?mode=search&text=${encodeURIComponent(PRODUCTION_ADDRESS)}&z=15`
+const PRODUCTION_MAP_LINK = `https://yandex.ru/maps/?mode=search&text=${encodeURIComponent(PRODUCTION_ADDRESS)}`
 
 const OGRN = ['11561', '71000', '457'].join('')
 const INN = ['61300', '09848'].join('')
@@ -284,7 +284,7 @@ function Hero() {
             <ArrowDownRight size={18} strokeWidth={2.2} />
           </a>
 
-          <a className="btn-book" href="#callback">
+          <a className="btn-book" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
             <span className="btn-book-avatar"><Phone size={18} strokeWidth={1.9} /></span>
             <span className="btn-book-text">
               <span className="btn-book-primary">Обсудить проект</span>
@@ -347,14 +347,35 @@ function ZoomableImage({ className = '', onOpen, ...props }) {
 
 function ImageLightbox({ gallery, onClose }) {
   const [activeImage, setActiveImage] = useState(gallery.index ?? 0)
+  const [scale, setScale] = useState(1)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
   const closeButton = useRef(null)
-  const touchStart = useRef(null)
+  const gesture = useRef(null)
+  const dragged = useRef(false)
   const images = gallery.images
   const isGallery = images.length > 1
+  const minScale = 1
+  const maxScale = 5
+
+  const applyScale = (nextScale) => {
+    const normalized = Math.min(maxScale, Math.max(minScale, nextScale))
+    setScale(normalized)
+    if (normalized === minScale) setPosition({ x: 0, y: 0 })
+  }
+
+  const zoomBy = (amount) => applyScale(scale + amount)
+  const resetView = () => {
+    setScale(1)
+    setPosition({ x: 0, y: 0 })
+  }
 
   const showImage = (nextIndex) => {
     setActiveImage((nextIndex + images.length) % images.length)
   }
+
+  useEffect(() => {
+    resetView()
+  }, [activeImage])
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -369,6 +390,23 @@ function ImageLightbox({ gallery, onClose }) {
       if (event.key === 'ArrowRight' && isGallery) {
         setActiveImage((current) => (current + 1) % images.length)
       }
+      if (event.key === '+' || event.key === '=') {
+        event.preventDefault()
+        setScale((current) => Math.min(maxScale, current + 0.5))
+      }
+      if (event.key === '-') {
+        event.preventDefault()
+        setScale((current) => {
+          const next = Math.max(minScale, current - 0.5)
+          if (next === minScale) setPosition({ x: 0, y: 0 })
+          return next
+        })
+      }
+      if (event.key === '0') {
+        event.preventDefault()
+        setScale(1)
+        setPosition({ x: 0, y: 0 })
+      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -378,18 +416,80 @@ function ImageLightbox({ gallery, onClose }) {
     }
   }, [images.length, isGallery, onClose])
 
+  const getTouchDistance = (touches) => {
+    const first = touches[0]
+    const second = touches[1]
+    return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY)
+  }
+
   const handleTouchStart = (event) => {
-    const touch = event.changedTouches[0]
-    touchStart.current = touch ? { x: touch.clientX, y: touch.clientY } : null
+    dragged.current = false
+    if (event.touches.length === 2) {
+      gesture.current = {
+        mode: 'pinch',
+        distance: getTouchDistance(event.touches),
+        scale,
+      }
+      return
+    }
+
+    const touch = event.touches[0]
+    if (!touch) return
+    gesture.current = {
+      mode: scale > 1 ? 'pan' : 'swipe',
+      x: touch.clientX,
+      y: touch.clientY,
+      originX: position.x,
+      originY: position.y,
+    }
+  }
+
+  const handleTouchMove = (event) => {
+    if (!gesture.current) return
+
+    if (gesture.current.mode === 'pinch' && event.touches.length === 2) {
+      event.preventDefault()
+      const ratio = getTouchDistance(event.touches) / gesture.current.distance
+      applyScale(gesture.current.scale * ratio)
+      dragged.current = true
+      return
+    }
+
+    if (gesture.current.mode === 'pan' && event.touches.length === 1) {
+      event.preventDefault()
+      const touch = event.touches[0]
+      setPosition({
+        x: gesture.current.originX + touch.clientX - gesture.current.x,
+        y: gesture.current.originY + touch.clientY - gesture.current.y,
+      })
+      dragged.current = true
+    }
   }
 
   const handleTouchEnd = (event) => {
-    if (touchStart.current === null) return
+    if (!gesture.current) return
+
+    if (event.touches.length === 1 && gesture.current.mode === 'pinch') {
+      const touch = event.touches[0]
+      gesture.current = {
+        mode: scale > 1 ? 'pan' : 'swipe',
+        x: touch.clientX,
+        y: touch.clientY,
+        originX: position.x,
+        originY: position.y,
+      }
+      return
+    }
+
+    if (event.touches.length > 0) return
+    const currentGesture = gesture.current
+    gesture.current = null
+    if (currentGesture.mode !== 'swipe') return
+
     const touch = event.changedTouches[0]
-    const end = touch ? { x: touch.clientX, y: touch.clientY } : touchStart.current
-    const distanceX = end.x - touchStart.current.x
-    const distanceY = end.y - touchStart.current.y
-    touchStart.current = null
+    const end = touch ? { x: touch.clientX, y: touch.clientY } : { x: currentGesture.x, y: currentGesture.y }
+    const distanceX = end.x - currentGesture.x
+    const distanceY = end.y - currentGesture.y
 
     if (distanceY < -72 && Math.abs(distanceY) > Math.abs(distanceX) * 1.15) {
       onClose()
@@ -400,9 +500,39 @@ function ImageLightbox({ gallery, onClose }) {
     distanceX > 0 ? showImage(activeImage - 1) : showImage(activeImage + 1)
   }
 
-  const handleBackdropClick = (event) => {
-    if (event.target.closest('img, button')) return
-    onClose()
+  const handleWheel = (event) => {
+    event.preventDefault()
+    zoomBy(event.deltaY < 0 ? 0.35 : -0.35)
+  }
+
+  const handleMouseDown = (event) => {
+    if (scale <= 1 || event.button !== 0) return
+    dragged.current = false
+    gesture.current = {
+      mode: 'pan',
+      x: event.clientX,
+      y: event.clientY,
+      originX: position.x,
+      originY: position.y,
+    }
+  }
+
+  const handleMouseMove = (event) => {
+    if (gesture.current?.mode !== 'pan' || scale <= 1) return
+    setPosition({
+      x: gesture.current.originX + event.clientX - gesture.current.x,
+      y: gesture.current.originY + event.clientY - gesture.current.y,
+    })
+    dragged.current = true
+  }
+
+  const handleMouseUp = () => {
+    gesture.current = null
+  }
+
+  const handleStageClick = (event) => {
+    if (event.target === event.currentTarget && !dragged.current) onClose()
+    dragged.current = false
   }
 
   return (
@@ -411,7 +541,7 @@ function ImageLightbox({ gallery, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-label={`Полноэкранный просмотр: ${gallery.label}`}
-      onClick={handleBackdropClick}
+      onClick={(event) => event.target === event.currentTarget && onClose()}
     >
       <button ref={closeButton} className="lightbox-close" type="button" onClick={onClose} aria-label="Закрыть изображение">
         <X size={24} strokeWidth={1.7} />
@@ -423,13 +553,44 @@ function ImageLightbox({ gallery, onClose }) {
         </button>
       )}
 
-      <figure className="lightbox-figure" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-        <div className="lightbox-image-stage">
-          <img src={asset(images[activeImage])} alt={`${gallery.label}${isGallery ? ` — фотография ${activeImage + 1} из ${images.length}` : ''}`} />
+      <div className="lightbox-zoom-tools" aria-label="Масштаб изображения">
+        <button type="button" onClick={() => zoomBy(-0.5)} disabled={scale <= minScale} aria-label="Уменьшить изображение">
+          <Minus size={20} strokeWidth={1.8} />
+        </button>
+        <output aria-live="polite">{Math.round(scale * 100)}%</output>
+        <button type="button" onClick={() => zoomBy(0.5)} disabled={scale >= maxScale} aria-label="Увеличить изображение">
+          <Plus size={20} strokeWidth={1.8} />
+        </button>
+        <button type="button" onClick={resetView} disabled={scale === 1 && position.x === 0 && position.y === 0} aria-label="Сбросить масштаб">
+          <RotateCcw size={18} strokeWidth={1.8} />
+        </button>
+      </div>
+
+      <figure className="lightbox-figure">
+        <div
+          className={`lightbox-image-stage${scale > 1 ? ' is-zoomed' : ''}`}
+          onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onClick={handleStageClick}
+        >
+          <img
+            src={asset(images[activeImage])}
+            alt={`${gallery.label}${isGallery ? ` — фотография ${activeImage + 1} из ${images.length}` : ''}`}
+            draggable="false"
+            onDoubleClick={() => scale > 1 ? resetView() : applyScale(2.5)}
+            style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})` }}
+          />
         </div>
-        <figcaption>
+        <figcaption onClick={onClose}>
           <span>{gallery.label}</span>
-          {isGallery && <span>{activeImage + 1} / {images.length}</span>}
+          <span>{isGallery ? `${activeImage + 1} / ${images.length} · ` : ''}Колесо, двойной клик или жест двумя пальцами</span>
         </figcaption>
       </figure>
 
@@ -614,7 +775,6 @@ function Services({ onOpenImage }) {
           <span className="eyebrow light">Возможности</span>
           <h2 className="section-title light-title">Мастерская <span className="serif italic">без&nbsp;границ</span></h2>
           <p>Выберите направление — пространство справа покажет характер работы, материалы и масштаб.</p>
-          <span className="services-signature">6 направлений · 1 производство</span>
         </div>
 
         <div className="services-stage">
@@ -660,10 +820,62 @@ function Services({ onOpenImage }) {
   )
 }
 
-function About({ onOpenImage }) {
-  const [activeStep, setActiveStep] = useState(0)
-  const [stepNumber, stepTitle, stepText] = PROCESS[activeStep]
+function Production() {
+  const placeholders = [
+    ['01', 'Цех и оборудование'],
+    ['02', 'Материалы и отделка'],
+    ['03', 'Сборка и контроль качества'],
+  ]
 
+  return (
+    <section className="section production" id="production">
+      <div className="production-head">
+        <div>
+          <span className="eyebrow">Наше производство</span>
+          <h2 className="section-title">От идеи до готового <span className="serif italic">интерьера</span></h2>
+        </div>
+        <p>Собственное производство позволяет контролировать точность, материалы и качество исполнения на каждом этапе.</p>
+      </div>
+
+      <div className="production-projects" aria-label="Будущая галерея производства">
+        {placeholders.map(([number, title]) => (
+          <div className="production-placeholder" key={number}>
+            <span>{number}</span>
+            <Factory size={28} strokeWidth={1.35} />
+            <div>
+              <strong>{title}</strong>
+              <small>Фото скоро появится</small>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="production-location">
+        <div className="production-address">
+          <span className="production-address-icon"><MapPin size={22} strokeWidth={1.7} /></span>
+          <div>
+            <span className="eyebrow">Адрес производства</span>
+            <p>{PRODUCTION_ADDRESS}</p>
+            <a href={PRODUCTION_MAP_LINK} target="_blank" rel="noreferrer">
+              Построить маршрут <ArrowUpRight size={17} />
+            </a>
+          </div>
+        </div>
+        <div className="production-map">
+          <iframe
+            src={PRODUCTION_MAP_URL}
+            title="Производство Khmelevsky Furniture Studio на карте"
+            loading="lazy"
+            allowFullScreen
+          />
+          <span className="production-map-label"><MapPin size={15} /> Генеральское</span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function About({ onOpenImage }) {
   return (
     <section className="section about" id="about">
       <div className="about-heading">
@@ -696,113 +908,13 @@ function About({ onOpenImage }) {
         <p className="about-lead">Мебель должна ощущаться так, будто всегда была частью архитектуры</p>
         <p className="about-text">Поэтому проектировщики, производство и монтажная команда работают как единая система. Мы не адаптируем готовые модули — начинаем с человека, его привычек и конкретного пространства.</p>
         <div className="about-facts">
-          <span><b>10+</b><small>лет опыта</small></span>
+          <span><b>20+</b><small>лет опыта</small></span>
           <span><b>2500+</b><small>реализованных проектов</small></span>
           <span><b>∞</b><small>вариантов исполнения</small></span>
         </div>
         <a className="text-link" href="#contacts">Обсудить идею <ArrowUpRight size={18} /></a>
       </div>
-
-      <div className="process-lab">
-        <div className="process-head">
-          <span>Как рождается проект</span>
-          <span>{stepNumber} / 04</span>
-        </div>
-        <div className="process-progress"><span style={{ width: `${(activeStep + 1) * 25}%` }} /></div>
-        <div className="process-tabs" role="tablist" aria-label="Этапы работы">
-          {PROCESS.map(([number, title], index) => (
-            <button
-              key={number}
-              type="button"
-              className={activeStep === index ? 'is-active' : ''}
-              onClick={() => setActiveStep(index)}
-              aria-selected={activeStep === index}
-              role="tab"
-            >
-              <span>{number}</span>{title}
-            </button>
-          ))}
-        </div>
-        <div className="process-detail" key={stepNumber}>
-          <span>{stepNumber}</span>
-          <h3>{stepTitle}</h3>
-          <p>{stepText}</p>
-        </div>
-      </div>
     </section>
-  )
-}
-
-function CallbackForm() {
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [comment, setComment] = useState('')
-  const [status, setStatus] = useState('idle')
-
-  const submit = async (event) => {
-    event.preventDefault()
-    if (!phone.trim()) return
-    setStatus('sending')
-
-    if (FORM_ENDPOINT) {
-      try {
-        const response = await fetch(FORM_ENDPOINT, {
-          method: 'POST',
-          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-          body: JSON.stringify({ Имя: name, Телефон: phone, Комментарий: comment }),
-        })
-        setStatus(response.ok ? 'ok' : 'error')
-      } catch {
-        setStatus('error')
-      }
-      return
-    }
-
-    const subject = encodeURIComponent('Заявка на обратный звонок с сайта')
-    const body = encodeURIComponent(`Имя: ${name || '—'}\nТелефон: ${phone}\nКомментарий: ${comment || '—'}`)
-    window.location.href = `${CONTACTS.emailHref}?subject=${subject}&body=${body}`
-    setStatus('ok')
-  }
-
-  if (status === 'ok') {
-    return (
-      <div className="form-done">
-        <span className="form-done-icon"><Check size={22} strokeWidth={2.2} /></span>
-        <p className="form-kicker">Заявка отправлена</p>
-        <h3>Спасибо, скоро свяжемся</h3>
-        <p>Если удобнее продолжить сейчас — напишите нам в Telegram.</p>
-        <a className="btn-primary btn-light" href={CONTACTS.telegramHref} target="_blank" rel="noreferrer">
-          Открыть Telegram <ArrowUpRight size={18} />
-        </a>
-      </div>
-    )
-  }
-
-  return (
-    <form className="callback" onSubmit={submit}>
-      <p className="form-kicker">Оставить заявку</p>
-      <h3>Давайте обсудим ваш проект</h3>
-
-      <label className="field">
-        <span>Ваше имя</span>
-        <input type="text" value={name} onChange={(event) => setName(event.target.value)} placeholder="Как к вам обращаться" />
-      </label>
-      <label className="field">
-        <span>Телефон *</span>
-        <input type="tel" required value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="+7 (___) ___-__-__" />
-      </label>
-      <label className="field">
-        <span>Коротко о задаче</span>
-        <textarea rows={2} value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Кухня, гардеробная, коммерческий проект…" />
-      </label>
-
-      <button className="form-submit" type="submit" disabled={status === 'sending'}>
-        {status === 'sending' ? 'Отправляем…' : 'Отправить заявку'}
-        <ArrowUpRight size={18} />
-      </button>
-      {status === 'error' && <p className="form-error">Не удалось отправить. Позвоните нам: {CONTACTS.phoneLabel}</p>}
-      <p className="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
-    </form>
   )
 }
 
@@ -823,7 +935,6 @@ function Contact() {
           </div>
         </div>
 
-        <div id="callback"><CallbackForm /></div>
       </div>
     </section>
   )
@@ -868,6 +979,7 @@ export default function App() {
         <Clients />
         <Portfolio onOpenImage={setLightbox} />
         <Services onOpenImage={setLightbox} />
+        <Production />
         <About onOpenImage={setLightbox} />
         <Contact />
       </main>
